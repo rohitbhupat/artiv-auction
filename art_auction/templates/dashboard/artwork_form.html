@@ -1,0 +1,297 @@
+{% extends './base.html' %}
+{% block title %}Add Artworks - ARTIV{% endblock %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'dashboard/css/artwork_form.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script>
+    (function () {
+        const theme = localStorage.getItem("theme") || "auto";
+        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isDarkMode = theme === "dark" || (theme === "auto" && prefersDarkScheme);
+    
+    if (isDarkMode) {
+        document.documentElement.classList.add("dark-mode");
+    } else {
+        document.documentElement.classList.add("light-mode");
+    }
+    })();      
+    document.addEventListener("DOMContentLoaded", function() {
+        document.documentElement.classList.add("loaded");
+    });
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .filter-dropdown {
+        position: absolute;
+        top: 85px;
+        right: 2rem;
+    }
+
+    .filter-dropdown .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+    .error-message {
+        color: red;
+        font-weight: bold;
+    }
+    .fieldWrapper-label-row {
+        display: flex;
+        gap: 1px; /* Adds space between the label and radio buttons */
+        align-items: center; /* Ensures alignment of items */
+    }
+    
+    .fieldWrapper-label-row label {
+        margin-right: 10px; /* Space between label and radio buttons */
+        font-weight: bold; /* Make the label bold for better readability */
+    }
+    
+    .fieldWrapper .form-check-inline {
+        margin-right: 15px; /* Adjust spacing between radio buttons */
+        gap: 1px; /* Adds space between the label and radio buttons */
+        display: flex; /* Aligns radio button and label on the same line */
+        align-items: center; /* Ensures the label and radio button are vertically aligned */
+    }
+    
+    .fieldWrapper .form-check-label {
+        margin-left: 6px; /* Space between radio button and label */
+    }
+    
+    .fieldWrapper .form-check-input {
+        margin-right: 5px; /* Space between radio button and label */
+    }    
+</style>
+{% endblock %}
+{% block content %}
+{% include './includes/header.html' %}
+{% include "art/arrow_button.html" %}
+<div class="app-content pt-3 p-md-3 p-lg-4">
+    <div class="button-container">
+        <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+        <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+    </div>
+    <div class="container-fluid">
+        <h1 class="app-page-title">Add Artwork</h1>
+        {% comment %} <div class="filter-dropdown">
+            <div class="dropdown-toggle" style="cursor:pointer;" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fa-solid fa-filter"></i> <span id="selectedFilter">Filter</span>
+            </div>
+            <div class="dropdown-menu" aria-labelledby="filterDropdown">
+                <li><a class="dropdown-item filter-option" href="?filter=discount">Discount</a></li>
+                <li><a class="dropdown-item filter-option" href="?filter=auction">Auction</a></li>
+            </div>
+        </div> {% endcomment %}
+        {% if form.non_field_errors %}
+        <div class="alert alert-danger">{{ form.non_field_errors }}</div>
+        {% endif %}
+        <div class="row g-4 mb-4">
+            <div class="col-12">
+                <div class="app-card artwork-card shadow-sm h-100">
+                    <div class="app-card-body p-2">
+                        <form id="artworkForm" method="post" enctype="multipart/form-data" >
+                            {% csrf_token %}
+                            <!-- Sale Type -->
+                            <div class="fieldWrapper-label-row">
+                                <label>Sale Type:</label>
+                                <div class="form-check form-check-inline">
+                                    {% for radio in form.sale_type %}
+                                        <div class="form-check-inline">
+                                            {{ radio.tag }}
+                                            <label class="form-check-label">{{ radio.choice_label }}</label>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>                            
+                            <!-- Shared Fields -->
+                            <div class="fieldWrapper">
+                                <label for="{{ form.product_name.id_for_label }}">{{ form.product_name.label }}:</label>
+                                {{ form.product_name }}
+                                {% if form.product_name.errors %}
+                                <div class="error-message">{{ form.product_name.errors }}</div>
+                                {% endif %}
+                            </div>
+                            <!-- Fields for Discount -->
+                            <div id="discount_fields" class="sale-type-fields" style="display: none;">
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.product_price.id_for_label }}">Price:</label>
+                                    {{ form.product_price }}
+                                </div>
+                                {% comment %} <div class="fieldWrapper">
+                                    <label for="id_product_qty_discount">Quantity:</label>
+                                    <input type="number" name="product_qty_discount" value="1" readonly id="id_product_qty_discount">
+                                </div> {% endcomment %}
+                                <!-- Purchase Category Field (Only Visible for Discount) -->
+                                <div class="fieldWrapper">
+                                    <label for="id_purchase_category">Purchase Category:</label>
+                                    {{ form.purchase_category }}
+                                    {% comment %} <select name="purchase_category" id="id_purchase_category">
+                                        {% for category in purchase_categories %}
+                                            <option value="{{ category.id }}">{{ category.name }}</option>
+                                        {% endfor %}
+                                    </select> {% endcomment %}
+                                </div>                                
+                            </div>
+
+                            <!-- Fields for Auction -->
+                            <div id="auction_fields" class="sale-type-fields" style="display: none;">
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.opening_bid.id_for_label }}">Opening Bid:</label>
+                                    {{ form.opening_bid }}
+                                </div>
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.product_cat.id_for_label }}">Catalogue:</label>
+                                    {{ form.product_cat }}
+                                </div>
+                                {% comment %} <div class="fieldWrapper">
+                                    <label for="id_product_qty_auction">Quantity:</label>
+                                    <input type="number" name="product_qty_auction" value="1" readonly id="id_product_qty_auction">
+                                </div> {% endcomment %}
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.end_date.id_for_label }}">End Date:</label>
+                                    {{ form.end_date }}
+                                </div>
+                            </div>
+                            <!-- Dimension Fields -->
+                            <div class="fieldWrapper">
+                                <label for="dimension_unit">Dimensions:</label>
+                                <select id="dimension_unit" name="dimension_unit" onchange="toggleDimensionFields()">
+                                    <option value="cm">Centimeters</option>
+                                    <option value="ft">Feet</option>
+                                </select>
+                            </div>
+                            <div id="dimension_cm_fields">
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.length_in_centimeters.id_for_label }}">{{ form.length_in_centimeters.label }} (cm):</label>
+                                    {{ form.length_in_centimeters }}
+                                </div>
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.width_in_centimeters.id_for_label }}">{{ form.width_in_centimeters.label }} (cm):</label>
+                                    {{ form.width_in_centimeters }}
+                                </div>
+                            </div>
+                            <div id="dimension_ft_fields" style="display: none;">
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.foot.id_for_label }}">{{ form.foot.label }} (ft):</label>
+                                    {{ form.foot }}
+                                </div>
+                                <div class="fieldWrapper">
+                                    <label for="{{ form.inches.id_for_label }}">{{ form.inches.label }} (inch):</label>
+                                    {{ form.inches }}
+                                </div>
+                            </div>
+
+                            <!-- Image Field -->
+                            <div class="fieldWrapper">
+                                <label for="{{ form.product_image.id_for_label }}">{{ form.product_image.label }}:</label>
+                                {{ form.product_image }}
+                            </div>
+                            <!-- 360 Model Field -->
+                            <div class="fieldWrapper">
+                                <label for="{{ form.model_360.id_for_label }}">{{ form.model_360.label }}:</label>
+                                {{ form.model_360 }}
+                            </div>
+
+                            <!-- Submit Button -->
+                            <div class="d-grid mx-auto">
+                                <input class="btn btn-upload" type="submit" value="Upload" />
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% include './includes/footer.html' %}
+{% endblock %}
+{% block js %}
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function toggleSaleTypeFields() {
+            const saleType = document.querySelector('input[name="sale_type"]:checked')?.value;
+            document.getElementById('discount_fields').style.display = (saleType === 'discount') ? 'block' : 'none';
+            document.getElementById('auction_fields').style.display = (saleType === 'auction') ? 'block' : 'none';
+        }
+
+        document.querySelectorAll('input[name="sale_type"]').forEach(input => {
+            input.addEventListener("change", toggleSaleTypeFields);
+        });
+    
+        toggleSaleTypeFields();
+    });    
+
+    function toggleDimensionFields() {
+        const dimensionUnit = document.getElementById('dimension_unit')?.value;
+        const cmFields = document.getElementById('dimension_cm_fields');
+        const ftFields = document.getElementById('dimension_ft_fields');
+
+        if (dimensionUnit && cmFields && ftFields) {
+            cmFields.style.display = dimensionUnit === 'cm' ? 'block' : 'none';
+            ftFields.style.display = dimensionUnit === 'ft' ? 'block' : 'none';
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        toggleDimensionFields();
+    });
+
+/*    document.addEventListener("DOMContentLoaded", function () {
+        const saleTypeField = document.querySelector("#id_sale_type");
+      
+        function toggleSaleTypeFields() {
+          const selectedType = saleTypeField?.value;
+          const discountFields = document.getElementById('discount_fields');
+          const auctionFields = document.getElementById('auction_fields');
+      
+          if (selectedType === 'discount') {
+            discountFields.style.display = 'block';
+            auctionFields.style.display = 'none';
+          } else if (selectedType === 'auction') {
+            discountFields.style.display = 'none';
+            auctionFields.style.display = 'block';
+          }
+        }
+      
+        if (saleTypeField) {
+          saleTypeField.addEventListener("change", toggleSaleTypeFields);
+          toggleSaleTypeFields(); // Initialize on page load
+        }
+      });    
+      document.getElementById("id_purchase_category")?.setAttribute("name", "purchase_category");
+      document.addEventListener("DOMContentLoaded", function () {
+        const purchaseCategory = document.getElementById("id_purchase_category");
+        if (purchaseCategory) {
+            purchaseCategory.setAttribute("name", "purchase_category");
+        }
+    });
+    document.addEventListener("DOMContentLoaded", function() {
+        document.getElementById("artworkForm").addEventListener("submit", function(event) {
+            event.preventDefault();
+            let formData = new FormData(this);
+    
+            fetch("", {
+                method: "POST",
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert("Artwork added successfully!");
+                    window.location.href = "/artworks";
+                } else {
+                    alert("Error adding artwork. Please check your inputs.");
+                }
+            })
+            .catch(error => {
+                console.error("Error:", error);
+                alert("Something went wrong. Try again.");
+            });
+        });
+    });*/
+</script>
+{% endblock %}

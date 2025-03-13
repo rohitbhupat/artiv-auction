@@ -1,0 +1,51 @@
+{% extends './base.html' %} {% block title %}Artwork Delete? - ARTIV{% endblock %} {% load static %} {% block links %}
+<link rel="stylesheet" href="{% static 'dashboard/css/artwork_delete.css' %}">
+{% endblock %} {% block content %}
+{% include './includes/header.html' %}
+{% include "art/arrow_button.html" %}
+
+
+
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="button-container">
+            <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+            <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+        </div>
+        <div class="container">
+
+            <h1 class="app-page-title">Delete artworks</h1>
+
+
+            <div class="row g-4 mb-4">
+                <div class="col-12">
+                    <div class="app-card shadow-sm h-100">
+                        <div class="app-card-body app-card-delete p-2">
+                            <form method="post">{% csrf_token %}
+                                <p>Are you sure you want to delete "{{ object }}"?</p>
+                                {{ form }}
+                                <button class="btn btn-confirm_delete" style="border-radius:5px;" type="submit">
+                                    Confirm
+                                </button>
+                            </form>
+                        </div>
+
+                    </div>
+                    <!--//app-card-->
+                </div>
+
+            </div>
+
+
+        </div>
+        <!--//container-fluid-->
+    </div>
+    <!--//app-content-->
+
+
+    {% include './includes/footer.html' %}
+
+{% endblock %} {% block js %}
+{% endblock %}
+{% block jscript %}
+(function(){scroller();}());
+{% endblock %}

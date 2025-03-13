@@ -1,0 +1,146 @@
+{% extends './layout.html' %}
+{% load static %}
+{% block title %}Callback - ARTIV{% endblock %}
+{% block css_file %}
+<link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/style.css' %}">
+<link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/callback.css' %}">
+<script>
+    (function () {
+      const theme = localStorage.getItem("theme") || "auto";
+      const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const isDarkMode = theme === "dark" || (theme === "auto" && prefersDarkScheme);
+    
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark-mode");
+      } else {
+        document.documentElement.classList.add("light-mode");
+      }
+    })();      
+    document.addEventListener("DOMContentLoaded", function() {
+      document.documentElement.classList.add("loaded");
+    });
+    
+  </script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@100;400;700&display=swap');
+</style>
+{% endblock %}
+{% block body %}
+<div class="home-button-container">
+    <a href="http://127.0.0.1:8000" class="btn btn-light btn-home">HOME</a>
+</div>
+<div class="text-center" style="margin-top:20%">
+    {% if status == "FAILED" %}
+    <style>
+        body {
+            background-image: url('{% static 'images/assets/SORRYIMG_final.png' %}');
+        }
+    </style>
+    {% else %}
+    <style>
+        body {
+            background-image: url('{% static 'images/assets/THANKYOU.jpeg' %}');
+        }
+    </style>
+    {% endif %}
+</div>
+
+<!-- Feedback Modal -->
+<form method="POST" action="{% url 'dashboard:submit_feedback' %}">
+    {% csrf_token %}
+    <div id="feedbackModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Give Us Ratings!</h3>
+                <span class="close">&times;</span>
+            </div>
+            <div class="rating-container">
+                <div class="rating-icons">
+                    <span id="1-star" data-rating="Poor">★</span>
+                    <span id="2-star" data-rating="Fair">★</span>
+                    <span id="3-star" data-rating="Good">★</span>
+                    <span id="4-star" data-rating="Very Good">★</span>
+                    <span id="5-star" data-rating="Excellent">★</span>
+                </div>
+                <button id="resetRating" class="btn btn-reset">Remove Rating</button>
+            </div>
+            <p id="ratingText">Select a rating</p>
+            
+            <!-- Hidden input field to store the rating -->
+            <input type="hidden" name="rating" id="ratingInput">
+            
+            <label class="feedback-label">We'd love to hear your experience</label>
+            <textarea class="feedback-text" name="feedback_text" placeholder="Share your feedback..."></textarea>
+            
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-submit">Submit Feedback</button>
+        </div>
+    </div>
+</form>
+
+
+<script>
+    // Only show modal if 'show_feedback_modal' is True
+    {% if show_feedback_modal %}
+        setTimeout(function() {
+            var modal = document.getElementById("feedbackModal");
+            modal.style.display = "block";
+        }, 3000);
+    {% endif %}
+
+    // Close modal functionality
+    var closeModal = document.getElementsByClassName("close")[0];
+    closeModal.onclick = function() {
+        var modal = document.getElementById("feedbackModal");
+        modal.style.display = "none";
+    }
+
+    // Update rating text based on star clicked
+    var stars = document.querySelectorAll('.rating-icons span');
+    var ratingText = document.getElementById('ratingText');
+    var ratingInput = document.getElementById('ratingInput');
+    
+    stars.forEach(star => {
+        star.onclick = function() {
+            var rating = this.getAttribute('data-rating');
+            ratingText.innerHTML = rating;
+            ratingInput.value = rating;  // Update hidden input with selected rating
+            stars.forEach(s => s.style.color = '#000');  // Reset color
+            for (let i = 0; i <= this.id.split('-')[0] - 1; i++) {
+                stars[i].style.color = 'gold';  // Color selected stars gold
+            }
+        }
+    });
+
+    // Reset rating functionality
+    var resetButton = document.getElementById('resetRating');
+    resetButton.onclick = function() {
+    stars.forEach(star => star.style.color = '#000'); // Reset stars color
+    ratingText.innerHTML = 'Select a rating';  // Reset rating text
+    ratingInput.value = '';  // Reset hidden input
+}
+
+    // Submit feedback functionality
+    var submitButton = document.getElementById('submitFeedback');
+    submitButton.onclick = function() {
+    var rating = ratingText.innerHTML; // Get the selected rating
+    var feedback = document.querySelector('.feedback-text').value; // Get feedback text
+
+    // Process feedback submission (e.g., send to server)
+    console.log('Rating:', rating);
+    console.log('Feedback:', feedback);
+
+    // Close the modal after submission (optional)
+    var modal = document.getElementById("feedbackModal");
+    modal.style.display = "none";
+
+    // Optionally, reset the form
+    stars.forEach(star => star.style.color = '#000'); // Reset stars
+    ratingText.innerHTML = 'Select a rating';
+    document.querySelector('.feedback-text').value = ''; // Clear feedback text
+};
+
+</script>
+{% endblock %}
+
+{% block footer %} {% endblock %}

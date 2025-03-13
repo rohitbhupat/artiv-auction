@@ -1,0 +1,214 @@
+{% extends './base.html' %}
+{% block title %}Artworks List - ARTIV{% endblock %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'dashboard/css/artwork_list.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/ordermodel_list.css' %}">
+<link rel="stylesheet" href="{% static 'dashboard/css/index.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<script>
+    (function () {
+        const theme = localStorage.getItem("theme") || "auto";
+        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isDarkMode = theme === "dark" || (theme === "auto" && prefersDarkScheme);
+    
+    if (isDarkMode) {
+        document.documentElement.classList.add("dark-mode");
+    } else {
+        document.documentElement.classList.add("light-mode");
+    }
+    })();      
+    document.addEventListener("DOMContentLoaded", function() {
+        document.documentElement.classList.add("loaded");
+    });
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .filter-dropdown {
+        position: absolute;
+        top: 85px;
+        right: 1.5rem;
+    }
+    .filter-dropdown .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+    .modal-table th,
+    .modal-table td {
+        border-right: 1px solid #dee2e6; /* Apply vertical border between th and td */
+    }
+    .modal-table th:last-child,
+    .modal-table td:last-child {
+        border-right: none; /* Remove border for the last column */
+    }
+    .small-image {
+        max-width: 80px; /* Define the maximum width for the image */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
+{% endblock %}
+{% block content %}
+{% include './includes/header.html' %}
+{% include "art/arrow_button.html" %}
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="button-container">
+            <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+            <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+        </div>
+        <br>
+        <div class="container-fluid_list poppins-regular-products">
+            <h1 class="app-page-title" id="pageTitle">View All Artworks</h1>
+            <div class="filter-dropdown">
+                <div class="dropdown-toggle" style="cursor:pointer;" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa-solid fa-filter"></i> <span id="selectedFilter">All Artworks</span>
+                </div>
+                <div class="dropdown-menu" aria-labelledby="filterDropdown">
+                    <a class="dropdown-item filter-option" data-filter="All Artworks" href="?filter=all">All Artworks</a>
+                    <a class="dropdown-item filter-option" data-filter="Discount" href="?filter=discount">Discount</a>
+                    <a class="dropdown-item filter-option" data-filter="Auction" href="?filter=auction">Auction</a>
+                </div>
+            </div>
+            <div class="row poppins-regular-products">
+                {% for product in object_list %}
+                <div class="artwork-card_list col-6 col-md-4 col-xxl-2">
+                    <div class="app-card app-card-doc shadow-sm h-100">
+                        <div class="app-card-thumb-holder p-3">
+                            <div class="app-card-thumb">
+                                <img class="thumb-image" src="{{ MEDIA_URL }}{{ product.product_image }}" alt="">
+                            </div>
+                        </div>
+                        <div class="app-card-body p-3 has-card-actions">
+                            <h4 class="app-doc-title truncate mb-0">
+                                <a href="#" data-toggle="modal" data-target="#productModal{{ product.id }}">{{ product.product_name }}</a>
+                            </h4>                            
+                            <div class="app-doc-meta">
+                                <div class="btn-group d-flex mx-auto mb-2 mt-2" role="group" aria-label="Basic outlined example">
+                                    <a href="{% url 'dashboard:product_update' pk=product.pk %}" type="button" class="btn btn-update btn-sm">Update</a>
+                                </div>
+                                <div class="btn-group d-flex mx-auto mb-2 mt-2" role="group" aria-label="Basic outlined example">
+                                <a href="{% url 'dashboard:product_delete' pk=product.pk %}" type="button" class="btn btn-delete btn-sm">Delete</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modal -->
+                <div class="modal fade" id="productModal{{ product.id }}" tabindex="-1" role="dialog" aria-labelledby="productModalLabel{{ product.id }}" aria-hidden="true">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="productModalLabel{{ product.id }}">{{ product.product_name }}</h5>
+                                {% if product.ordermodel_set.exists %} <!-- Check if there are any orders for the product -->
+                                    <img src="{% static 'images/assets/sold.png' %}" class="small-image" alt="Sold Image">
+                                {% endif %}
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div class="modal-body">
+                                <style>
+                                    
+                                </style>
+                                <table class="table modal-table">
+                                    <tbody>
+                                        <tr>
+                                            <th scope="row">Product Image</th>
+                                            <td><img src="{{ product.product_image.url }}" class="img-fluid" alt="{{ product.product_name }}"></td>
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Dimensions</th>
+                                            <td>
+                                                {% if product.length_in_centimeters and product.width_in_centimeters %}
+                                                    {{ product.length_in_centimeters }} x {{ product.width_in_centimeters }} cm
+                                                {% elif product.foot and product.inches %}
+                                                    {{ product.foot }} x {{ product.inches }} ft
+                                                {% else %}
+                                                    Not specified
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+                                        {% if product.sale_type == 'discount' %}
+                                        <tr>
+                                            <th>Actual Price</th>
+                                            <td>₹ {{ product.product_price }}</td>
+                                        </tr>
+                                        <tr>
+                                            <th>Discounted Price</th>
+                                            <td>₹ {{ product.get_discounted_price|floatformat:0 }} </td>
+                                        </tr>
+                                        {% elif product.sale_type == 'auction' %}
+                                        <tr>
+                                            <th scope="row">Catalogue</th>
+                                            <td>{{ product.product_cat }}</td>
+                                        </tr>
+                                        {% comment %} <tr>
+                                            <th scope="row">Order By</th>
+                                            <td>{{ product.user }}</td>
+                                        </tr> {% endcomment %}
+                                        <tr>
+                                            <th scope="row">Opening Bid</th>
+                                            <td>₹ {{ product.opening_bid }}</td>
+                                        </tr>
+                                        <tr>
+                                        <th scope="row">Last Bid</th>
+                                        {% if product.get_total_bids > 0 %}
+                                        <td id="last-bid-{{ product.id }}">₹ {{ product.get_last_bid }}</td>
+                                        {% else %}
+                                            <td>No bids yet</td>
+                                        {% endif %}
+                                        </tr>
+                                        <tr>
+                                            <th scope="row">Total Bids</th>
+                                            <td id="total-bids-{{ product.id }}">{{ product.get_total_bids }}</td>
+                                        </tr>
+                                        {% endif %}
+                                    </tbody>
+                                </table>
+                            </div>                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-primary_details" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {% empty %}
+                <h3 class="open-sans-empty dark-mode-heading">No artworks to show</h3>
+                {% endfor %}
+            </div>
+    </div>
+    </div>
+    {% include './includes/footer.html' %}
+<button onclick="topFunction()" id="back-to-top-btn" title="Go to top"><i class="fa-solid fa-angles-up"></i></button>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const productId = {{ product.id }};
+        const socket = new WebSocket(`ws://${window.location.host}/ws/bid/${productId}/`);
+    
+        socket.onmessage = function(e) {
+            const data = JSON.parse(e.data);
+            document.getElementById(`last-bid-${productId}`).innerText = `₹ ${data.bid}`;
+            document.getElementById(`total-bids-${productId}`).innerText = parseInt(document.getElementById(`total-bids-${productId}`).innerText) + 1;
+        };
+    
+        document.getElementById('bid-button').addEventListener('click', () => {
+            const bid = document.getElementById('bid-input').value;
+            socket.send(JSON.stringify({'bid': bid}));
+        });
+    });
+    // Ensure the modal works properly
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('shown.bs.modal', () => {
+            // Trigger modal-related actions here if needed
+        });
+    });
+</script>
+<script src="{% static 'js/artwork_list.js' %}"></script>
+{% endblock %}

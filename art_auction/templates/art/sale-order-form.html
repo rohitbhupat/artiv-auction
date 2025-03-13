@@ -1,0 +1,111 @@
+{% extends './layout.html' %}
+{% load static %}
+{% block title %}Checkout - ARTIV{% endblock %}
+{% block robot %}index, follow{% endblock %}
+{% block css_file %}
+<link rel="stylesheet" href="{% static 'dashboard/css/form.css' %}" type="text/css">
+<script>
+    (function() {
+    const theme = localStorage.getItem('theme') || 'auto';
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDarkMode = theme === 'dark' || (theme === 'auto' && prefersDarkScheme);
+    
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add('light-mode');
+    }
+    })();
+</script>
+<style>
+    .button-container {
+        position: absolute;
+        top: 85px; /* Adjust the value to move vertically */
+        left: 2rem; /* Adjust the value to move horizontally */
+    }
+</style>
+{% endblock %}
+{% block body %}
+{% load i18n %}
+{% load static %}
+
+{% include "./includes/navbar.html" %}
+<br>
+{% include "./arrow_button.html" %}
+<div class="button-container">
+    <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+    <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+</div>
+<div class="container p-4 poppins-regular-order">
+    <div class="card">
+        <div class="card-body">
+            <div class="row">
+                <div class="col-4">
+                    <h5>{{ product.product_name }}</h5>
+                    <img src="{{ MEDIA_URL }}{{ product.product_image }}" alt="img" width="100%" />
+                    <br>
+                    <br>
+                    <table class="table table-bordered">
+                        <tbody>
+                            <tr>
+                                <th>Catalogue</th>
+                                <td>{{ product.product_cat }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="d-grid gap-2">
+                        <a class="btn btn-primary" type="button" href="{% url 'art:view_3d' id=product.id %}">View in AR</a>
+                    </div>
+                </div>
+                <div class="col-8">
+                    <div class="app-card shadow-sm h-100">
+                        <div class="app-card-body p-2">
+                            <form method="POST" enctype="multipart/form-data" action="{% url 'art:confirm_order' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="product" value="{{ product.pk }}">  {# Add this line to include the product ID #}
+                                <div class="fieldWrapper">
+                                    <label for="id_product_price">
+                                        {% if is_first_purchase %}
+                                            Discounted Price (30% off):
+                                        {% else %}
+                                            Original Price:
+                                        {% endif %}
+                                    </label>
+                                    <input type="number" name="product_price" value="{{ price|floatformat:0 }}" required="" id="id_product_price" readonly>
+                                </div>
+                                <div class="fieldWrapper">
+                                    <label for="id_product_qty">Artwork Quantity:</label>
+                                    <input type="number" name="product_qty" value="1" min="1" max="{{ product.product_qty }}" required="" id="id_product_qty" onchange="getTotal()" readonly>
+                                </div>
+                                <div class="fieldWrapper">
+                                    <label for="id_product_qty">Delivery Address:</label>
+                                    <textarea name="delivery_at" required></textarea>
+                                </div>
+                                <div class="fieldWrapper">
+                                    <label for="id_product_qty">Total:</label>
+                                    <h5 id="id_product_total"></h5>
+                                </div>
+                                <div class="d-grid mx-auto">
+                                    <input class="btn btn-success" type="submit" value="Proceed to pay">
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <!--//app-card-->
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/theme.js' %}"></script>
+<script>
+    function getTotal() {
+        const price = document.getElementById('id_product_price').value;
+        const qty = document.getElementById('id_product_qty').value;
+        document.getElementById('id_product_total').innerText = price * qty;
+    }
+
+    getTotal();
+</script>
+
+{% endblock %}

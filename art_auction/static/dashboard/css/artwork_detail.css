@@ -1,0 +1,328 @@
+/* Root variables for themes */
+:root {
+  --card-bg-light: #eaddcc;
+  --card-bg-dark: #2D2A32;
+  --text-light: #000000;
+  --text-dark: #ffffff;
+}
+
+body {
+  color: var(--text-color);
+}
+
+/* Light mode styles */
+body.light-mode {
+  /* --card-bg: var(--card-bg-light); */
+  --text-color: var(--text-light);
+}
+
+/* Dark mode styles */
+body.dark-mode {
+  --card-bg: var(--card-bg-dark);
+  --text-color: var(--text-dark);
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  background-clip: border-box;
+  border-radius: .25rem;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.card * {
+  color: inherit !important;
+  /* Ensures all child elements inherit the text color */
+}
+
+.form-control {
+  border: 1px solid var(--text-color) !important;
+  /* Adjust border color dynamically */
+  background-color: var(--card-bg) !important;
+  /* Matches the card background */
+  color: var(--text-color) !important;
+  /* Matches the text color */
+}
+
+.form-control::placeholder {
+  color: var(--text-color);
+  opacity: 0.7;
+  /* Placeholder slightly dimmer */
+}
+
+.button-container {
+  position: absolute;
+  top: 85px;
+  /* Adjust the value to move vertically */
+  left: 2rem;
+  /* Adjust the value to move horizontally */
+}
+
+#bid-message {
+  display: block;
+  margin-top: 10px;
+}
+
+/* Hide number input arrows in most browsers */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.alert-danger {
+  background-color: #f8d7da;
+  border-color: #f5c6cb;
+  color: #721c24;
+}
+
+/* Dark mode alert styles */
+body.dark-mode .alert-success {
+  background-color: #48bb78 !important;
+  /* Use a darker green for success messages */
+  color: black !important;
+  /* Override the text color to black */
+}
+
+body.dark-mode .alert-danger {
+  background-color: #ff9090 !important;
+  /* Darker red for error messages */
+  color: black !important;
+  /* Override the text color to black */
+}
+
+body.dark-mode .alert-warning {
+  background-color: #fbbf24 !important;
+  /* Darker yellow for warnings */
+  color: black !important;
+  /* Override the text color to black */
+}
+
+/* Ensure the default alert color for light mode is not changed */
+body.light-mode .alert-success {
+  background-color: #baffcd;
+  color: #22543d;
+}
+
+body.light-mode .alert-danger {
+  background-color: #ffc3c8;
+  color: #721c24;
+}
+
+body.light-mode .alert-warning {
+  background-color: #fff3cd;
+  color: #856404;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  /* Prevent overflow during zoom */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: auto;
+  /* Center the container */
+  background-color: var(--card-bg);
+  /* Optional: Matches card background */
+  border-radius: 10px;
+  /* Optional: Rounds the container edges */
+}
+
+.image-container img.magnify {
+  max-width: 100%;
+  max-height: 100%;
+  height: auto;
+  display: block;
+  object-fit: contain;
+  transition: transform 0.3s ease-in-out;
+  /* Smooth zoom effect */
+}
+
+/* Enhanced zoom effect on hover */
+.image-container img.magnify:hover {
+  cursor: zoom-in;
+}
+
+.viewer {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  /* Ensure it appears to the right of the main image */
+  width: 400px;
+  height: 400px;
+  overflow: hidden;
+  border: 2px solid #ddd;
+  display: none;
+  background: #fff;
+  /* display: block !important; Ensure the zoomed image is visible on hover */
+  /* transition: opacity 0.3s ease-in-out; Smooth fade-in for zoomed image */
+}
+
+.viewer img {
+  width: 600%;
+  height: auto;
+  object-fit: cover;
+  transform: translate(0, 0);
+  transition: transform 0.1s ease-out;
+  /* Smooth movement */
+}
+
+.magnifier {
+  position: absolute;
+  width: 150px;
+  height: 150px;
+  border: 2px solid #00b050;
+  background: rgba(0, 0, 0, 0.3);
+  /* Darker overlay for better focus */
+  pointer-events: none;
+  display: none;
+  transform: translate(-50%, -50%);
+}
+
+.d-flex {
+  display: flex;
+  align-items: center;
+  /* Vertically center input and button */
+  gap: 0px;
+  /* Space between the input and button */
+}
+
+#bid-amount {
+  flex: 1;
+  /* Makes the input box responsive */
+}
+
+/* Flat Minimal Button Styles (Palette 2 Aesthetic) */
+.btn-primary_details {
+  /* background: #d5bdaf !important; */
+  /* Soft Muted Beige */
+  /* color: #5a4b42 !important; */
+  /* Dark Text for Readability */
+  border: none !important;
+  border-radius: 8px;
+  /* Slightly Rounded */
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-in-out;
+  /* Soft Shadow */
+}
+
+.btn-primary_details:hover {
+  overflow: hidden;
+  /* Slightly Darker Shade */
+  /* Enhanced Shadow */
+}
+
+/* Underline Effect */
+.btn-primary_details::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: 10%;
+  width: 0;
+  height: 2px;
+  background-color: #474747;
+  transition: all 0.4s ease-in-out;
+  transform: translateX(-50%);
+}
+
+/* Hover Effect */
+.btn-primary_details:hover::after {
+  width: 30%;
+}
+
+.btn-success_bid {
+  background: #f2e9e4 !important;
+  /* Soft Warm Beige */
+  color: #5a4b42 !important;
+  border: 0.5px solid black !important;
+  border-radius: 8px;
+  padding: 12px 28px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-success_bid:hover {
+  background: #f2e9e4 !important;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-warning_buy {
+  background: #ffffff !important;
+  /* Light Cream */
+  /* color: #5a4b42 !important; */
+  border: 0.5px solid #696969 !important;
+  border-radius: 8px;
+  padding: 12px 28px 10px 5px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-in-out;
+  box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-warning_buy:hover {
+  background: #faf7f7 !important;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.251);
+  border: 1px solid black !important;
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode .btn-primary_details {
+  /* background: #423f45 !important; */
+  color: #ffffff !important;
+}
+
+body.dark-mode .btn-success_bid {
+  background: #484d52 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .btn-warning_buy {
+  background: none !important;
+  border: 0.2px solid #696969 !important;
+  color: #ffffff !important;
+}
+
+body.dark-mode .btn-success_bid:hover {
+  background: #3c3e41 !important;
+}
+
+body.dark-mode .btn-warning_buy:hover {
+  border: 1px solid #eee !important;
+  background: none !important;
+}
+/* Flat Minimal Button Styles (Palette 2 Aesthetic) */
+.button-ar {
+  border-radius: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease-in-out;
+}
+
+.button-ar:hover {
+  overflow: hidden;
+  box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.251);
+}

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    
+    <!-- Favicon -->
+    <link rel="icon" href="{% static 'images/assets/ARTIV ICON.png' %}" type="image/x-icon">
+
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="{% static 'dashboard/css/style.css' %}" type="text/css">
+    <link rel="stylesheet" href="{% static 'dashboard/css/contact.css' %}" type="text/css">
+    {% block css_file %}{% endblock %}
+
+    <!-- Bootstrap CSS -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous" />
+
+    <!-- Page Title -->
+    <title>{% block title %}{% endblock %}</title>
+    
+    <!-- Meta Tags -->
+    <meta name="title" content="{% block meta_title %}{% endblock %}">
+    <meta name="description" content="{% block description %}{% endblock %}">
+    <meta name="keywords" content="{% block keywords %}{% endblock %}">
+    <meta name="robots" content="{% block robot %}{% endblock %}">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+    <meta name="language" content="English">
+    <meta name="revisit-after" content="3 days">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/css/all.min.css" integrity="sha512-MV7K8+y+gLIBoVD59lQIYicR65iaqukzvf/nwasF0nqhPay5w/9lJmVM2hMDcnK1OnMGCdVK+iQrJ7lzPJQd1w==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+</head>
+
+<body>
+    <div class="loader"></div>
+    {% block header %}
+    <!-- Add your header content here -->
+    {% endblock %}
+
+    {% block body %}
+    <!-- Main content will be injected here by child templates -->
+    {% endblock %}
+    
+    <footer>
+        {% block footer %}
+        <div class="footer-container poppins-regular-footer">
+            <div class="footer-content poppins-regular-footer">
+                <ul class="footer-links">
+                    <li><a href="{% url 'art:about' %}">About Us</a></li>
+                    <li><a href="{% url 'art:contact' %}">Contact Us</a></li>
+                    <li><a href="{% url 'art:faq' %}">FAQs</a></li>
+                    <li><a href="{% url 'art:terms' %}">Terms of Use</a></li>
+                    <li><a href="{% url 'art:privacy' %}">Privacy Policy</a></li>
+    
+                    {% if request.resolver_match.url_name in "purchase_category_products,artwork_sale" %}
+                        <!-- Show only Purchase Cancellation Policy -->
+                        <li><a href="{% url 'art:purchase_cancel' %}">Purchase Cancellation Policy</a></li>
+    
+                    {% elif request.resolver_match.url_name in "index,product_details,place_order,confirm_order,callback,unsold_items,catalog_products" %}
+                        <!-- Show only Auction Cancellation Policy -->
+                        <li><a href="{% url 'art:auction_cancel' %}">Auction Cancellation Policy</a></li>
+    
+                    {% else %}
+                        <!-- Show both policies -->
+                        <li><a href="{% url 'art:purchase_cancel' %}">Purchase Cancellation Policy</a></li>
+                        <li><a href="{% url 'art:auction_cancel' %}">Auction Cancellation Policy</a></li>
+                    {% endif %}
+                </ul>
+                <p>&copy; 2025 ARTIV. All rights reserved.</p>
+            </div>
+        </div>
+        {% endblock %}
+    </footer>    
+    {% block js %}{% endblock %}
+
+    <script>
+        $(document).ready(function() {
+            $('.loader').fadeOut();
+        });
+    </script>
+
+    {% comment %} <script src="https://kit.fontawesome.com/d400ed2add.js" crossorigin="anonymous"></script> {% endcomment %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.2.1/js/all.min.js" integrity="sha512-rpLlll167T5LJHwp0waJCh3ZRf7pO6IT1+LZOhAyP6phAirwchClbTZV3iqL3BMrVxIYRbzGTpli4rfxsCK6Vw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+</body>
+</html>

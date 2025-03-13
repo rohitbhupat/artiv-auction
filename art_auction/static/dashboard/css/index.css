@@ -1,0 +1,413 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900&display=swap');
+
+:root {
+    --background-color: #ffffff;
+    --text-color: #000;
+    --link-color: #343434;
+    --link-hover-color: #000000;
+    --title-color: #000;
+    --contact-text-color: #000;
+    /* Added variable for contact text color */
+}
+
+.dark-mode {
+    --background-color: #161617;
+    --text-color: #fff;
+    --link-color: #d8d8d8;
+    --link-hover-color: #ffffff;
+    --title-color: #fff;
+    --contact-text-color: #fff;
+    /* Added variable for contact text color in dark mode */
+}
+
+.poppins-regular-products {
+    font-family: "Poppins", sans-serif;
+    font-weight: 350;
+    font-style: normal;
+}
+
+.artwork-card_home {
+    flex: 0 0 auto !important;
+    width: 24.66666667% !important;
+}
+
+/* Dark mode styles */
+.dark-mode .artwork-name {
+    color: white !important;
+}
+
+/* Light mode styles */
+.light-mode .artwork-name {
+    color: black !important;
+}
+
+.row {
+    justify-content: start;
+    --bs-gutter-y: 1.5rem !important;
+}
+
+.open-sans-empty {
+    color: var(--text-color) !important;
+}
+
+.dark-mode-heading {
+    color: var(--text-color);
+    /* Use the variable for text color */
+}
+
+/* Back to Top Button */
+#back-to-top-btn {
+    display: none;
+    position: fixed;
+    bottom: 20px;
+    right: 30px;
+    z-index: 99;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 15px;
+    border-radius: 50%;
+    font-size: 18px;
+    width: 3.6%;
+}
+
+.filter-dropdown {
+    position: absolute;
+    top: 70px;
+    right: 35px;
+}
+
+.filter-dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+/* Back to Top Button */
+body.dark-mode #back-to-top-btn {
+    background-color: #414043;
+    color: #fff;
+    border: none;
+}
+
+body.light-mode #back-to-top-btn {
+    background-color: #f7eeee;
+    color: #333;
+    border: none;
+}
+
+/* Ensure headings are readable */
+body.dark-mode h3.open-sans-empty.dark-mode-heading {
+    color: var(--text-light) !important;
+}
+
+.button-container {
+    position: absolute;
+    top: 85px;
+    /* Adjust the value to move vertically */
+    left: 2rem;
+    /* Adjust the value to move horizontally */
+}
+
+.carousel-control-prev-icon {
+    width: 1rem !important;
+}
+
+.carousel-control-next-icon {
+    width: 1rem !important;
+}
+
+/* Light Mode Hover */
+body.light-mode .artwork-card_home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* Dark Mode Hover */
+body.dark-mode .artwork-card_home:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15);
+    /* Lighter shadow for dark mode */
+    transition: all 0.3s ease;
+}
+
+/* Light Mode Card Styles */
+body.light-mode .app-card {
+    background-color: #fff !important;
+    color: var(--text-light) !important;
+}
+
+/* Dark Mode Card Styles */
+body.dark-mode .app-card {
+    background-color: var(--card-bg-dark) !important;
+    color: var(--text-dark) !important;
+}
+
+.carousel-inner {
+    height: 16.5rem;
+    /* Set the height of the carousel container */
+    background-repeat: no-repeat;
+    /* Prevent repeating the image */
+    background-size: cover;
+    /* Ensures the image covers the entire container */
+    background-position: center;
+    /* Centers the image */
+}
+
+.cropped-image {
+    display: none;
+    /* Hides the <img> tag to only use the background */
+}
+
+.carousel-item img {
+    object-fit: cover;
+    /* Ensures the image scales correctly */
+    height: 100%;
+    /* Matches the height of the carousel */
+    width: 100%;
+}
+
+.cropped-image {
+    max-width: 90%;
+    /* Shrink the image width, e.g., 80% of the container */
+    max-height: 80%;
+    /* Shrink the image height, e.g., 80% of the container */
+    object-fit: cover;
+    /* Ensures the image is cropped rather than stretched */
+    object-position: center;
+    /* Centers the cropped portion */
+    display: block;
+    /* Ensure the image is visible */
+    margin: 0 auto;
+    /* Center the image horizontally */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 25% !important;
+    /* Restrict width to the button size */
+    height: 50px !important;
+    /* Set height for better control */
+    position: absolute !important;
+    /* Ensure correct positioning */
+    top: 40% !important;
+    /* Center vertically */
+    transform: translateY(-50%) !important;
+    z-index: 5 !important;
+    /* Higher z-index but not too large to overlap navbar */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    /* Remove additional padding */
+}
+
+/* Specific size for arrow icons */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 35px !important;
+    height: 35px !important;
+    background-color: rgb(0, 0, 0) !important;
+    /* Semi-transparent background */
+    border-radius: 50% !important;
+    /* Circular buttons */
+    background-size: 50% !important;
+    /* Shrink the arrow icon for visibility */
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+
+/* Hover effect for arrows */
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    /* Darker background on hover */
+}
+
+/* Indicators styling */
+.carousel-indicators button {
+    background-color: #000 !important;
+    /* Black color for indicators */
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50% !important;
+    /* Circular indicators */
+    /* opacity: 0.7 !important; */
+}
+
+.carousel-indicators button.active {
+    background-color: #fff !important;
+    /* White color for active indicator */
+    opacity: 1 !important;
+}
+
+.carousel-indicators button:hover {
+    opacity: 1 !important;
+    /* Full opacity on hover */
+}
+
+/* Style for Carousel Indicators */
+.carousel-indicators_home {
+    position: absolute !important;
+    /* Ensure they are positioned relative to the carousel */
+    bottom: 25% !important;
+    /* Position indicators closer to the bottom */
+    left: 50% !important;
+    /* Center align horizontally */
+    transform: translateX(-50%) !important;
+    /* Adjust for perfect centering */
+    z-index: 5 !important;
+    /* Ensure they appear above the carousel content */
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    /* Space between indicators */
+}
+
+.carousel-indicators_home button {
+    background-color: #000 !important;
+    /* Black color for default indicators */
+    width: 12px !important;
+    /* Set size of indicators */
+    height: 12px !important;
+    border-radius: 50% !important;
+    /* Make them circular */
+    opacity: 0.9 !important;
+    /* Slightly transparent for default state */
+    border: none !important;
+    /* Remove borders */
+}
+
+.carousel-indicators_home button.active {
+    background-color: #fff !important;
+    /* White for active indicator */
+    opacity: 1 !important;
+    /* Fully opaque */
+}
+
+.carousel-indicators_home button:hover {
+    opacity: 1 !important;
+    /* Full opacity on hover */
+}
+
+/* Buttons */
+.btn-home_details {
+    /* background: #d5bdaf !important; */
+    /* Soft Muted Beige */
+    /* color: #5a4b42 !important; */
+    /* Dark Text for Readability */
+    border: none !important;
+    border-radius: 8px;
+    /* Slightly Rounded */
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    /* Soft Shadow */
+}
+
+.btn-home_details:hover {
+    overflow: hidden;
+    /* Slightly Darker Shade */
+    /* Enhanced Shadow */
+}
+
+/* Underline Effect */
+.btn-home_details::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 10%;
+    width: 0;
+    height: 2px;
+    background-color: #474747;
+    transition: all 0.4s ease-in-out;
+    transform: translateX(-50%);
+}
+
+/* Hover Effect */
+.btn-home_details:hover::after {
+    width: 30%;
+}
+
+.btn-home_ar {
+    background: #ffffff !important;
+    /* Light Cream */
+    /* color: #5a4b42 !important; */
+    border: 0.5px solid #696969 !important;
+    border-radius: 8px;
+    padding: 12px 28px 10px 5px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-home_ar:hover {
+    background: #faf7f7 !important;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.251);
+    border: 1px solid black !important;
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode .btn-home_details {
+    /* background: #423f45 !important; */
+    color: #ffffff !important;
+}
+
+body.dark-mode .btn-home_ar {
+    background: none !important;
+    border: 0.2px solid #696969 !important;
+    color: #ffffff !important;
+}
+
+body.dark-mode .btn-home_ar:hover {
+    border: 1px solid #eee !important;
+    background: none !important;
+}
+
+.category-link {
+    font-size: 1.2rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: #333;
+    display: inline-flex;
+    align-items: center;
+    transition: color 0.3s ease-in-out;
+}
+
+.category-link .arrow {
+    font-size: 1.4rem;
+    margin-left: 5px;
+    transition: transform 0.3s ease-in-out;
+}
+
+.category-link:hover {
+    color: #ff6f61;
+    /* Etsy-like orange */
+}
+
+.category-link:hover .arrow {
+    transform: translateX(5px);
+}
+
+.heading {
+    margin-top: -1rem !important;
+    margin-bottom: 3rem !important;
+}
+.our-categories-title {
+    font-family: 'Masthan', sans-serif;
+    font-size: 8rem;
+    color: #c9ada7;
+    -webkit-text-stroke: 0.22px black !important;
+}
+/* fonts */
+.name-calistoga-regular {
+    /* font-family: "Calistoga", serif; */
+    font-size: 1.2rem;
+    font-style: light;
+}

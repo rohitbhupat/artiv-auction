@@ -1,0 +1,149 @@
+{% extends './layout.html' %} {% load static %} {% block title%}About Us - ARTIV{% endblock %}{% block css_file %}
+<link rel="stylesheet" href="{% static 'home/css/about.css'%}" type="text/css">
+
+{% endblock %} {% block body %} {% load i18n %}
+<script>
+    (function() {
+    const theme = localStorage.getItem('theme') || 'auto';
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDarkMode = theme === 'dark' || (theme === 'auto' && prefersDarkScheme);
+    
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add('light-mode');
+    }
+    })();
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+    .button-container {
+        position: absolute;
+        top: 85px; /* Adjust the value to move vertically */
+        left: 2rem; /* Adjust the value to move horizontally */
+    }
+</style>
+{% include "./includes/navbar.html" %}
+<br>
+{% include "./arrow_button.html" %}
+<div class="button-container">
+    <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+    <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+</div>
+<div class="container-fluid">
+    <h1 class="text-center open-sans-about">ABOUT US</h1>
+    <div class="container-fluid"
+        style="background-image: url({% static 'images/assets/ARTIV_GIF.gif' %});height:35rem;background-repeat:no-repeat;background-size:75%;background-position:center;">
+        </div>
+        <div class="container">
+        <h1 class="open-sans-heading" style="position: relative;top: 75%;text-align: center;">THE EPITOME OF CREATIVITY</h1>
+        <hr class="bold-line">
+        <p class="poppins-regular-text">
+            "ARTIV" is for Art Collecting and Bidding.
+            As the leading marketplace for Art by the world’s emerging and established Artists, we have made it easy for
+            new and experienced collectors to discover, buy, and sell art. Everything you will need to collect art,
+            you’ll find on here.
+        </p>
+        <hr class="bold-line">
+        <h1 class="text-center open-sans-heading">About Our Arts</h1>
+        <div class="row art_desc">
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    Nature art transforms the beauty of the natural world into creative expressions. 
+                    By engaging with nature, artists draw inspiration and incorporate its wonders into their work, whether through abstract or realistic forms. 
+                    This art can showcase nature’s splendor, reflect scientific insights, or explore our deep connection to the environment.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=17 %}"><img src="{% static 'images/assets/Watercolor_Painting.jpg' %}" alt="Watercolor Painting" width="100%" height="200px"></a>
+            </div>
+        </div>
+        
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=21 %}" class="catalog-ref"><img src="{% static 'images/assets/about1.jpg' %}" alt="about5" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    Fantasy art creates magical worlds and mythical creatures, transporting viewers to enchanting realms full of wonder and imagination.
+                </p>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <div class="row art_desc">
+
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    Floral art transforms flowers and plant materials into beautiful, balanced arrangements. Combining craft and creativity, it connects emotionally with viewers and has been cherished since ancient Egypt.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=22 %}" class="catalog-ref"><img src="{% static 'images/assets/True_Beauty.png' %}" alt="about6" width="100%" height="200px"></a>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=23 %}" class="catalog-ref"><img src="{% static 'images/assets/Fall_in_LOVE_with_MATHS.png' %}" alt="about7" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    Abstract art uses shapes, colors, and forms to evoke emotions and experiences, breaking away from realistic representation. It focuses on feelings and ideas rather than depicting the real world.
+                </p>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <div class="row art_desc">
+
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    Portrait art captures faces through painting, sculpture, or photography. An ancient tradition dating back over 5,000 years, it was once the only way to preserve someone's likeness before photography.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=24 %}" class="catalog-ref"><img src="{% static 'images/assets/about5.jpg' %}" alt="about6" width="100%" height="200px"></a>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <br>
+        <div class="container-fluid"
+            style="background-image: url({% static 'images/assets/AR_GIF.gif' %});height:35rem;background-repeat:no-repeat;background-size:75%; background-position:center">
+            </div>
+        <h1 class="open-sans-about" style="position: relative;top: 75%;text-align: center;">"Reality ReImagined: Explore Art in a Whole New Dimension"</h1>
+        <hr class="bold-line">
+        <div class="pt3">
+            <h4 class="heading-4 open-sans-heading">Transform your Art Experience with "ARTIV"</h4>
+            <p class="poppins-regular-text">
+            "With "ARTIV", you can use Augmented Reality (AR) to see your chosen piece come to life right where you plan to display it. 
+            Explore the art in your actual environment and make an informed decision with this cutting-edge technology!"
+            </p>
+        </div>
+        <button onclick="topFunction()" id="back-to-top-btn" title="Go to top"><i class="fa-solid fa-angles-up"></i>
+    </button>
+    </div>
+</div>
+<script src="{% static 'js/theme.js' %}"></script>
+<script>
+    // Get the button
+    var mybutton = document.getElementById("back-to-top-btn");
+
+    // When the user scrolls down 20px from the top of the document, show the button
+    window.onscroll = function() {scrollFunction()};
+
+    function scrollFunction() {
+        if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+            mybutton.style.display = "block";
+        } else {
+            mybutton.style.display = "none";
+        }
+    }
+
+    // When the user clicks on the button, scroll to the top of the document
+    function topFunction() {
+        document.body.scrollTop = 0; // For Safari
+        document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    }
+</script>
+{% endblock %}

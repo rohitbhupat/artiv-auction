@@ -1,0 +1,228 @@
+/*for paragraph*/
+.poppins-regular-text {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+    font-size: larger;
+}
+
+/*for heading*/
+.open-sans-about {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 700;
+    font-style: normal;
+    font-variation-settings: 100;
+}
+.open-sans-heading {
+    font-family: "Open Sans", sans-serif;
+    /* font-optical-sizing: auto; */
+    font-weight: 700;
+    font-size: xx-large;
+    font-style: normal;
+    font-variation-settings: 100;
+}
+/* Image hover effect */
+.art_desc img {
+    width: 100%;
+    height: auto;
+    opacity: 0.5;
+    transition: transform 0.3s ease, box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.art_desc img:hover {
+    transform: scale(1.05); /* Slightly scale up the image */
+    opacity: 1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Add a shadow effect */
+}
+
+  /* Dark mode styles */
+.dark-mode h1,
+.dark-mode h4 {
+    color: white ;
+}
+.catalog-ref {
+    color: black; /* Default color for light mode */
+    text-decoration: none;
+}
+
+.catalog-ref:hover {
+    text-decoration: underline;
+    color: black;
+    transition: color 0.3s ease; /* Smooth transition for mode change */
+}
+
+body.dark-mode .catalog-ref {
+    color: white; /* Color for dark mode */
+    text-decoration: none;
+}
+
+body.dark-mode .catalog-ref:hover {
+    text-decoration: underline;
+    color: white;
+    transition: color 0.3s ease;
+}
+
+/* Light mode styles */
+.light-mode h1,
+.light-mode h4 {
+    color: black ;
+}
+/* Reset margins and paddings for consistent spacing */
+body,
+h1,
+h4,
+p {
+    margin: 0;
+    padding: 0;
+}
+
+/* Center align all h1 and h4 */
+h1,
+h4 {
+    text-align: center;
+}
+
+/* Style the main heading */
+.container-fluid h1 {
+    margin-top: 10px;
+    /* Adjust spacing from the top */
+    /* color: brown; */
+    /* Change the color if needed */
+}
+
+/* Style the subheadings */
+.container-fluid h4 {
+    margin-top: 30px;
+    /* Adjust spacing from the top */
+}
+
+/* Style paragraphs */
+.container-fluid p {
+    margin-top: 15px;
+    /* Adjust spacing from the top */
+    line-height: 1.6;
+    /* Adjust line height for better readability */
+}
+
+/* .heading-4 {
+    color: brown;
+} */
+
+/* Ensure images fill their container */
+.art_desc img {
+    width: 100%;
+    height: auto;
+    /* Maintain aspect ratio */
+}
+
+/* Add padding around each art description row */
+.art_desc {
+    padding: 20px 0;
+    /* Add padding top and bottom */
+}
+
+/* Additional styles for the sections */
+.pt3 {
+    padding-top: 0px !important;
+    /* Adjust spacing from the top */
+}
+
+/* Style the container with background image */
+.container-fluid.background-image {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 300px;
+    position: relative;
+}
+
+/* Style the text inside the container with background image */
+.container-fluid.background-image h1 {
+    color: brown;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+.bold-line {
+    border-bottom: 2px solid black;
+}
+
+/* Media Query for Tablets */
+@media screen and (max-width: 768px) {
+
+    /* Adjust padding for smaller screens */
+    .art_desc {
+        padding: 10px 0;
+        /* Reduce padding top and bottom */
+    }
+}
+
+/* Media Query for Mobile Devices */
+@media screen and (max-width: 576px) {
+
+    /* Adjust margin and padding for smaller screens */
+    .container-fluid h1 {
+        margin-top: 30px;
+        /* Reduce spacing from the top */
+    }
+
+    .container-fluid h4 {
+        margin-top: 20px;
+        /* Reduce spacing from the top */
+    }
+
+    .container-fluid p {
+        margin-top: 10px;
+        /* Reduce spacing from the top */
+    }
+
+    .pt3 {
+        padding-top: 20px;
+        /* Reduce spacing from the top */
+    }
+
+    /* Adjust font sizes for better readability */
+    .container-fluid h1 {
+        font-size: 24px;
+        /* Reduce font size */
+    }
+
+    .container-fluid h4 {
+        font-size: 18px;
+        /* Reduce font size */
+    }
+
+    .container-fluid p {
+        font-size: 14px;
+        /* Reduce font size */
+    }
+}
+
+/* Back to Top Button */
+#back-to-top-btn {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Fixed/sticky position */
+    bottom: 20px;
+    /* Place the button 20px from the bottom */
+    right: 30px;
+    /* Place the button 30px from the right */
+    z-index: 99;
+    /* Make sure it does not overlap */
+    border: none;
+    /* Remove border */
+    outline: none;
+    /* Remove outline */
+    cursor: pointer;
+    /* Add a pointer on hover */
+    padding: 15px;
+    /* Padding */
+    border-radius: 50%;
+    /* Circular button */
+    font-size: 18px;
+    /* Font size */
+}

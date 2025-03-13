@@ -1,0 +1,385 @@
+{% extends './base.html' %}
+{% block title %}Orders - ARTIV{% endblock %}
+{% load static %}
+{% block links %}
+
+<link rel="stylesheet" href="{% static 'dashboard/css/ordermodel_list.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<!-- Tailwind CSS from CDN -->
+<link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+
+<script>
+    (function () {
+      const theme = localStorage.getItem("theme") || "auto";
+      const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const isDarkMode = theme === "dark" || (theme === "auto" && prefersDarkScheme);
+    
+      if (isDarkMode) {
+        document.documentElement.classList.add("dark-mode");
+      } else {
+        document.documentElement.classList.add("light-mode");
+      }
+    })();      
+    document.addEventListener("DOMContentLoaded", function() {
+      document.documentElement.classList.add("loaded");
+    });
+    
+  </script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .filter-dropdown {
+        position: absolute;
+        top: 85px;
+        right: 1.5rem;
+    }
+
+    .filter-dropdown .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+    .modal-table th,
+    .modal-table td {
+        border-right: 1px solid #dee2e6; /* Apply vertical border between th and td */
+    }
+                                        
+    .modal-table th:last-child,
+    .modal-table td:last-child {
+        border-right: none; /* Remove border for the last column */
+    }
+    .small-image {
+        max-width: 80px; /* Define the maximum width for the image */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
+{% endblock %}
+{% block content %}
+{% include './includes/header.html' %}
+{% include "art/arrow_button.html" %}
+{% load auth_extras %}
+
+{% comment %} <div class="app-wrapper"> {% endcomment %}
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="button-container">
+            <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+            <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+        </div>
+        <br>
+        {% comment %} {% if user.is_authenticated %}
+        <div class="home-button-container">
+            <a href="{% url 'art:index' %}" class="btn-home-order"><i class="fa-solid fa-house"></i> Home</a>
+        </div>
+        {% endif %} {% endcomment %}
+
+        <div class="container-fluid"> <!-- Changed from container-xl to container-fluid -->
+            <h1 class="app-page-title" id="pageTitle">Order List</h1>
+        
+            <div class="filter-dropdown">
+                <div class="dropdown-toggle" style="cursor:pointer;" id="filterDropdown" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa-solid fa-filter"></i> <span id="selectedFilter">Filter</span>
+                </div>
+                <div class="dropdown-menu" aria-labelledby="filterDropdown">
+                    <a class="dropdown-item filter-option" data-filter="All Artworks" href="?filter=all">All Artworks</a>
+                    <a class="dropdown-item filter-option" data-filter="Discount" href="?filter=discount">Discount</a>
+                    <a class="dropdown-item filter-option" data-filter="Auction" href="?filter=auction">Auction</a>
+
+                </div>
+            </div>
+            
+        
+        <div class="row g-4 mb-4">
+            <div class="table-container">
+                <table class="table table-bordered"> <!-- Added table-bordered for better line visibility -->
+                    <thead>
+                        <tr>
+                            <th scope="col">Sr No</th>
+                            <th scope="col">Artworks</th>
+                            <th scope="col">Date</th>
+                            {% if user|has_group:"SellerGroup" %}
+                            <th scope="col">Order By</th>
+                            {% endif %}
+                            <th scope="col">Delivery Address</th>
+                            {% if request.GET.filter == 'discount' %}
+                            <th scope="col">Actual Price</th>
+                            <th scope="col">Discounted Price</th>
+                            {% elif request.GET.filter == 'auction' %}
+                            <th scope="col">Last Bid</th>
+                            {% endif %}
+                            {% if request.GET.filter == 'all' or not request.GET.filter %}
+                            <th scope="col">Type</th>
+                            {% endif %}
+                            <th scope="col">Shipping Status</th>
+                            {% comment %} <th scope="col">Order Cancellation</th> {% endcomment %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for order in object_list %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>
+                                <a href="#" class="artworks-order" data-toggle="modal" data-target="#productModal{{ order.product.id }}">{{ order.product }}</a>
+                                <!-- Modal -->
+                                <div class="modal fade" id="productModal{{ order.product.id }}" tabindex="-1" role="dialog" aria-labelledby="productModalLabel{{ order.product.id }}" aria-hidden="true">
+                                    <div class="modal-dialog" role="document">
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <h5 class="modal-title" id="productModalLabel{{ order.product.id }}">{{ order.product }}</h5>
+                                                {% if user|has_group:"SellerGroup" %}
+                                                    <img src="{% static 'images/assets/sold.png' %}" class="small-image" alt="Sold Image">
+                                                {% else %}
+                                                    <img src="{% static 'images/assets/purchased.jpg' %}" class="small-image" alt="Purchased Image">
+                                                {% endif %}
+                                                <button type="button" class="btn-close" data-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <style>
+                                                
+                                            </style>
+                                            <div class="modal-body">
+                                                <table class="table modal-table">
+                                                    <tbody>
+                                                        <tr>
+                                                            <th scope="row">Product Image</th>
+                                                            <td><img src="{{ order.product.product_image.url }}" class="img-fluid" alt="{{ order.product.product_name }}"></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Dimensions</th>
+                                                            <td>{{ order.product.length_in_centimeters }} x {{ order.product.width_in_centimeters }} cm</td>
+                                                        </tr>
+                                                        {% if order.product.sale_type == 'discount' %}
+                                                        <tr>
+                                                            <th>Actual Price</th>
+                                                            <td>₹ {{ order.product.product_price }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th>Discounted Price</th>
+                                                            <td>₹ {{ order.product.get_discounted_price|floatformat:0 }} </td>
+                                                        </tr>
+                                                        {% elif order.product.sale_type == 'auction' %}
+                                                        <tr>
+                                                            <th scope="row">Catalogue</th>
+                                                            <td>{{ order.product.product_cat }}</td>
+                                                        </tr>
+                                                        {% if user|has_group:"SellerGroup" %}
+                                                        <tr>
+                                                            <th scope="row">Order By</th>
+                                                            <td>{{ order.user }}</td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        <tr>
+                                                            <th scope="row">Opening Bid</th>
+                                                            <td>₹ {{ order.product.opening_bid }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Last Bid</th>
+                                                            <td>₹ {{ order.order_price|floatformat:0 }}</td>
+                                                        </tr>
+                                                        {% endif %}
+                                                        <tr>
+                                                            <th scope="row">Date</th>
+                                                            <td>{{ order.order_date }}</td>
+                                                        </tr>
+                                                        <tr>
+                                                            <th scope="row">Delivery Address</th>
+                                                            <td>{{ order.delivery_at }}</td>
+                                                        </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-primary_details" data-dismiss="modal">Close</button>
+                                            </div>
+                                            {% comment %} <!-- Modal for Confirmation -->
+                                            <div class="order">
+                                                <p>Order #{{ order.id }} - Status: {{ order.shipping.status }}</p>
+                                                <div id="cancel-modal" class="hidden fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
+                                                    <div class="bg-white p-6 rounded-lg shadow-lg">
+                                                        <p>Are you sure you want to cancel this order?</p>
+                                                        <button id="confirm-cancel" class="bg-red-500 text-white py-2 px-4 rounded mt-4">Confirm Cancel</button>
+                                                        <button id="cancel-cancel" class="bg-gray-500 text-white py-2 px-4 rounded mt-4">Close</button>
+                                                    </div>
+                                                </div>
+                                            </div> {% endcomment %}
+
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ order.order_date }}</td>
+                            {% if user|has_group:"SellerGroup" %}
+                            <td>{{ order.user }}</td>
+                            {% endif %}
+                            <td>{{ order.delivery_at }}</td>
+                            {% if request.GET.filter == 'discount' %}
+                            <td>₹ {{ order.product.product_price }}</td>
+                            <td>₹ {{ order.product.get_discounted_price|floatformat:0 }}</td>
+                            {% elif request.GET.filter == 'auction' %}
+                            <td>₹ {{ order.order_price|floatformat:0  }}</td>
+                            {% endif %}
+                            {% if request.GET.filter == 'all' or not request.GET.filter %}
+                            <td>
+                            {% if order.product.sale_type == 'discount' %}
+                                Discount
+                            {% elif order.product.sale_type == 'auction' %}
+                                Auction
+                            {% else %}
+                                Unknown
+                            {% endif %}
+                            </td>
+                            {% endif %}
+                            <td>
+                                {% if order.shipping %}
+                                    <span class="badge 
+                                        {% if order.shipping.status == 'processing' %}badge-warning
+                                        {% elif order.shipping.status == 'shipped' %}badge-info
+                                        {% elif order.shipping.status == 'out_for_delivery' %}badge-primary
+                                        {% elif order.shipping.status == 'delivered' %}badge-success
+                                        {% elif order.shipping.status == 'cancelled' %}badge-danger
+                                        {% endif %}">
+                                        {{ order.shipping.get_status_display }}
+                                    </span>
+                                {% else %}
+                                    <span class="badge badge-secondary">No Shipping Info</span>
+                                {% endif %}
+                            </td>
+                            {% comment %} <td>
+                                {% if order.shipping and order.shipping.status in "processing,shipped" %}
+                                    <button class="btn btn-danger badge badge-danger btn-sm cancel-order-btn" data-order-id="{{ order.id }}">
+                                        Cancel Order
+                                    </button>
+                                {% else %}
+                                    <span class="badge badge-secondary">Cannot Cancel</span>
+                                {% endif %}
+                            </td>                             {% endcomment %}
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="7" class="text-center">
+                                <h3 class="open-sans-empty">No artworks to show</h3>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>        
+    </div>
+{% comment %} </div> {% endcomment %}
+<form method="post">
+    {% csrf_token %}
+</form>
+
+{% endblock %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const filterOptions = document.querySelectorAll(".filter-option");
+        const selectedFilterElement = document.getElementById("selectedFilter");
+        const pageTitle = document.getElementById("pageTitle");
+
+        // Map filters to their display names
+        const filterTextMap = {
+            all: "All Artworks Order List",
+            discount: "Discount Order List",
+            auction: "Auction Order List",
+        };
+
+        // Set default filter to "all" if no filter is present in the query string
+        const urlParams = new URLSearchParams(window.location.search);
+        const filter = urlParams.get("filter") || "all";
+
+        // Set the initial selected filter and page title
+        const filterText = filterTextMap[filter] || "Order List";
+        selectedFilterElement.textContent = filterText.replace(" Order List", ""); // Remove "Order List" for dropdown
+        pageTitle.textContent = filterText;
+
+        // Update the filter name and heading when a dropdown item is clicked
+        filterOptions.forEach(option => {
+            option.addEventListener("click", function () {
+                const selectedFilter = this.getAttribute("data-filter").toLowerCase();
+                const filterText = filterTextMap[selectedFilter] || "Order List";
+                selectedFilterElement.textContent = filterText.replace(" Order List", "");
+                pageTitle.textContent = filterText;
+            });
+        });
+    });
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".cancel-order").forEach(button => {
+            button.addEventListener("click", function () {
+                let orderId = this.getAttribute("data-order-id");
+    
+                // Show the modal
+                let modal = document.getElementById("cancel-modal");
+                modal.classList.remove("hidden");
+    
+                // Cancel button logic (close the modal without canceling)
+                document.getElementById("cancel-cancel").addEventListener("click", function () {
+                    modal.classList.add("hidden");
+                });
+    
+                // Confirm cancel button logic (trigger cancellation)
+                document.getElementById("confirm-cancel").addEventListener("click", function () {
+                    let csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value; // Fetch CSRF token
+                    
+                    fetch("{% url 'dashboard:cancel_order' %}", {
+                        method: "POST",
+                        headers: {
+                            "X-CSRFToken": csrfToken,
+                            "Content-Type": "application/json"
+                        },
+                        body: JSON.stringify({ "order_id": orderId })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            alert("Order cancelled and refund processed.");
+                            location.reload(); // Refresh page to update status
+                        } else {
+                            alert("Failed to cancel order.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error:", error);
+                        alert("An error occurred while canceling the order.");
+                    });                    
+                });
+            });
+        });
+    });
+    // jQuery AJAX method
+    $(document).ready(function () {
+        $(".cancel-order-btn").click(function () {
+            var orderId = $(this).data("order-id");
+            var csrfToken = "{{ csrf_token }}";
+    
+            if (confirm("Are you sure you want to cancel this order?")) {
+                $.ajax({
+                    url: "{% url 'dashboard:cancel_order' %}",
+                    type: "POST",
+                    headers: {
+                        "X-CSRFToken": csrfToken
+                    },
+                    contentType: "application/json",
+                    data: JSON.stringify({ "order_id": orderId }),
+                    success: function (response) {
+                        if (response.success) {
+                            alert(response.message);
+                            location.reload(); // Refresh page to update status
+                        } else {
+                            alert(response.error);
+                        }
+                    },
+                    error: function () {
+                        alert("An error occurred while processing your request.");
+                    }
+                });
+            }
+        });
+    });
+</script>
+{% endblock %}

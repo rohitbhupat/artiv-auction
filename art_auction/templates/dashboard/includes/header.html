@@ -1,0 +1,123 @@
+{% load static %}
+{% block links %}
+<link rel="stylesheet" type="text/css" href="{% static 'dashboard/css/navbar.css' %}" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet" />
+    <script>
+      (function () {
+        const theme = localStorage.getItem("theme") || "auto";
+        const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+        const isDarkMode = theme === "dark" || (theme === "auto" && prefersDarkScheme);
+      
+        if (isDarkMode) {
+          document.documentElement.classList.add("dark-mode");
+        } else {
+          document.documentElement.classList.add("light-mode");
+        }
+      })();      
+      document.addEventListener("DOMContentLoaded", function() {
+        document.documentElement.classList.add("loaded");
+      });
+      
+    </script>
+    <style>
+
+    </style>
+{% endblock %}
+{% load auth_extras %}
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container-fluid">
+            <!-- Logo -->
+            <a class="navbar-brand" href="#" data-bs-toggle="modal" data-bs-target="#logoModal">
+                <img src="{% static 'images/assets/ARTIV LOGO.png' %}" width="30" height="24" alt="ARTIV">
+            </a>
+            
+            <!-- Toggler for Mobile View -->
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <!-- Navbar Links -->
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'art:index' %}">Home</a>
+                    </li>
+                    
+                    {% if user|has_group:"SellerGroup" %}
+                        <!-- Artworks Dropdown -->
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="artworksDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                Artworks
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="artworksDropdown">
+                                <li><a class="dropdown-item open-sans-catalog" href="{% url 'dashboard:add_product' %}">Add Artworks</a></li>
+                                <li><a class="dropdown-item open-sans-catalog" href="{% url 'dashboard:product_list' %}">View Artworks</a></li>
+                            </ul>
+                        </li>
+                
+                        <!-- Bids -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:bid_list' %}">Bids</a>
+                        </li>
+                    {% endif %}
+                
+                    {% if user.is_authenticated %}
+                        <!-- Orders -->
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'dashboard:order_list' %}">Orders</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                
+                <!-- Username and Theme Toggle -->
+                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                    {% if user.is_authenticated %}
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                {{ user }}
+                            </a>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+                                <li><a class="dropdown-item" href="{% url 'art:logout' %}">Log Out</a></li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="themeDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                            <i class="fas fa-adjust"></i> 
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="themeDropdown">
+                            <li><a class="dropdown-item theme-toggle" href="#" data-theme="light">Light</a></li>
+                            <li><a class="dropdown-item theme-toggle" href="#" data-theme="dark">Dark</a></li>
+                            <li><a class="dropdown-item theme-toggle" href="#" data-theme="auto">Auto</a></li>
+                        </ul>
+                    </li>
+                </ul>                
+            </div>
+        </div>
+    </nav>    
+
+    <!-- Modal -->
+    <div class="modal fade" id="logoModal" tabindex="-1" aria-labelledby="logoModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="logoModalLabel">ARTIV</h5>
+                    <button type="button" class="btn-close btn-outline-danger" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <img src="{% static 'images/assets/ARTIV LOGO.png' %}" class="img-fluid" alt="logo">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary_details" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" crossorigin="anonymous"></script>
+    <script src="{% static 'js/header.js' %}"></script>
+</body>
+</html>

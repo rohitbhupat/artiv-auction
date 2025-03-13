@@ -1,0 +1,340 @@
+@import url('https://fonts.googleapis.com/css2?family=Calistoga&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.poppins-regular-products {
+    font-family: "Poppins", sans-serif;
+    font-weight: 350;
+    font-style: normal;
+}
+
+.product-card {
+    flex: 0 0 auto !important;
+    width: 24.66666667% !important;
+}
+
+.app-card-body {
+    background-color: #ffffff;
+}
+
+.row {
+    justify-content: start;
+    --bs-gutter-y: 1.5rem !important;
+}
+
+.text-details {
+    color: black;
+}
+
+/* Back to Top Button */
+#back-to-top-btn {
+    display: none;
+    /* Hidden by default */
+    position: fixed;
+    /* Fixed/sticky position */
+    bottom: 20px;
+    /* Place the button 20px from the bottom */
+    right: 30px;
+    /* Place the button 30px from the right */
+    z-index: 99;
+    /* Make sure it does not overlap */
+    border: none;
+    /* Remove border */
+    outline: none;
+    /* Remove outline */
+    cursor: pointer;
+    /* Add a pointer on hover */
+    padding: 15px;
+    /* Padding */
+    border-radius: 50%;
+    /* Circular button */
+    font-size: 18px;
+    /* Font size */
+    width: 3.6%;
+}
+
+:root {
+    --card-bg-light: #ffffff;
+    --card-bg-dark: #2D2A32;
+    --text-light: #000000;
+    --text-dark: #ffffff;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .poppins-regular-products {
+    color: var(--text-dark) !important;
+}
+
+body.dark-mode .app-card {
+    background-color: var(--card-bg-dark) !important;
+    /* Ensure the app-card background changes */
+}
+
+body.dark-mode .app-card-body {
+    background-color: var(--card-bg-dark) !important;
+    /* Ensure card body background changes */
+    color: var(--text-light) !important;
+    /* Text inside card should be dark in dark mode */
+}
+
+body.dark-mode .text-details {
+    color: var(--text-dark) !important;
+    /* Text inside card should be light in dark mode */
+}
+
+body.dark-mode .btn-primary {
+    border: none;
+}
+
+body.dark-mode .btn-warning {
+    border: none;
+}
+
+/* Back to Top Button */
+body.dark-mode #back-to-top-btn {
+    background-color: #333;
+    color: #fff;
+    border: none;
+}
+
+body.light-mode #back-to-top-btn {
+    background-color: #f8f9fa;
+    color: #333;
+    border: none;
+}
+
+/* Ensure headings are readable */
+body.dark-mode h3.open-sans-empty.dark-mode-heading {
+    color: var(--text-light) !important;
+}
+
+.filter-dropdown {
+    position: absolute;
+    top: 70px;
+    right: 35px;
+}
+
+.filter-dropdown .dropdown-menu {
+    right: 0;
+    left: auto;
+}
+
+.button-container {
+    position: absolute;
+    top: 85px;
+    /* Adjust the value to move vertically */
+    right: 10px;
+    /* Adjust the value to move horizontally */
+}
+
+/* Light Mode Hover */
+body.light-mode .product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* Dark Mode Hover */
+body.dark-mode .product-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15);
+    /* Lighter shadow for dark mode */
+    transition: all 0.3s ease;
+}
+
+/* Light Mode Card Styles */
+body.light-mode .app-card {
+    background-color: var(--card-bg-light) !important;
+    color: var(--text-light) !important;
+}
+
+/* Dark Mode Card Styles */
+body.dark-mode .app-card {
+    background-color: var(--card-bg-dark) !important;
+    color: var(--text-dark) !important;
+}
+
+.carousel-inner {
+    height: 25rem;
+    /* Set the height of the carousel container */
+    background-repeat: no-repeat;
+    /* Prevent repeating the image */
+    background-size: cover;
+    /* Ensures the image covers the entire container */
+    background-position: center;
+    /* Centers the image */
+}
+
+.cropped-image {
+    display: none;
+    /* Hides the <img> tag to only use the background */
+}
+
+.carousel-item img {
+    object-fit: cover;
+    /* Ensures the image scales correctly */
+    height: 100%;
+    /* Matches the height of the carousel */
+    width: 100%;
+}
+
+.cropped-image {
+    max-width: 90%;
+    /* Shrink the image width, e.g., 80% of the container */
+    max-height: 80%;
+    /* Shrink the image height, e.g., 80% of the container */
+    object-fit: cover;
+    /* Ensures the image is cropped rather than stretched */
+    object-position: center;
+    /* Centers the cropped portion */
+    display: block;
+    /* Ensure the image is visible */
+    margin: 0 auto;
+    /* Center the image horizontally */
+}
+
+.carousel-control-prev,
+.carousel-control-next {
+    width: 25% !important;
+    /* Restrict width to the button size */
+    height: 50px !important;
+    /* Set height for better control */
+    position: absolute !important;
+    /* Ensure correct positioning */
+    top: 40% !important;
+    /* Center vertically */
+    transform: translateY(-50%) !important;
+    z-index: 5 !important;
+    /* Higher z-index but not too large to overlap navbar */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    /* Remove additional padding */
+}
+
+/* Specific size for arrow icons */
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+    width: 35px !important;
+    height: 35px !important;
+    background-color: rgb(0, 0, 0) !important;
+    /* Semi-transparent background */
+    border-radius: 50% !important;
+    /* Circular buttons */
+    background-size: 50% !important;
+    /* Shrink the arrow icon for visibility */
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+
+/* Hover effect for arrows */
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+    background-color: rgba(0, 0, 0, 0.8) !important;
+    /* Darker background on hover */
+}
+
+/* Indicators styling */
+.carousel-indicators button {
+    background-color: #000 !important;
+    /* Black color for indicators */
+    width: 12px !important;
+    height: 12px !important;
+    border-radius: 50% !important;
+    /* Circular indicators */
+    /* opacity: 0.7 !important; */
+}
+
+.carousel-indicators button.active {
+    background-color: #fff !important;
+    /* White color for active indicator */
+    opacity: 1 !important;
+}
+
+.carousel-indicators button:hover {
+    opacity: 1 !important;
+    /* Full opacity on hover */
+}
+
+/* Style for Carousel Indicators */
+.carousel-indicators_home {
+    position: absolute !important;
+    /* Ensure they are positioned relative to the carousel */
+    bottom: 25% !important;
+    /* Position indicators closer to the bottom */
+    left: 50% !important;
+    /* Center align horizontally */
+    transform: translateX(-50%) !important;
+    /* Adjust for perfect centering */
+    z-index: 5 !important;
+    /* Ensure they appear above the carousel content */
+    display: flex !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    /* Space between indicators */
+}
+
+.carousel-indicators_home button {
+    background-color: #000 !important;
+    /* Black color for default indicators */
+    width: 12px !important;
+    /* Set size of indicators */
+    height: 12px !important;
+    border-radius: 50% !important;
+    /* Make them circular */
+    opacity: 0.9 !important;
+    /* Slightly transparent for default state */
+    border: none !important;
+    /* Remove borders */
+}
+
+.carousel-indicators_home button.active {
+    background-color: #fff !important;
+    /* White for active indicator */
+    opacity: 1 !important;
+    /* Fully opaque */
+}
+
+.carousel-indicators_home button:hover {
+    opacity: 1 !important;
+    /* Full opacity on hover */
+}
+
+/* fonts */
+.name-calistoga-regular {
+    font-size: 1.2rem;
+    font-style: light;
+}
+
+.our-categories-title {
+    font-family: 'Masthan', sans-serif;
+    font-size: 6rem;
+    color: #691f00;
+}
+
+/* original color
+.our-categories-title {
+    font-family: 'Masthan', sans-serif;
+    font-size: 6rem;
+    color: #691f00;
+}
+*/
+/* dusra color 
+.our-categories-title {
+    font-family: 'Masthan', sans-serif;
+    font-size: 6rem;
+    color: #e78f8e;
+}
+*/
+/* 2nd last color
+.our-categories-title {
+    font-family: 'Masthan', sans-serif;
+    font-size: 6rem;
+    color: #f48498;
+}
+*/
+/* last color */
+.our-categories-title {
+    font-family: 'Masthan', sans-serif;
+    font-size: 6rem;
+    color: #d44d5c;
+}

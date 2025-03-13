@@ -1,0 +1,80 @@
+{% extends "admin/change_list.html" %}
+
+{% block content %}
+<h2>Feedback Distribution</h2>
+
+<!-- Sentiment Chart -->
+<div style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px;">
+    <div>
+        <h3>Sentiment Analysis</h3>
+        <canvas id="sentimentChart" width="400" height="400"></canvas>
+    </div>
+</div>
+
+<!-- Only Feedback and Star Rating Chart -->
+<div style="display: flex; justify-content: center; width: 100%; margin-bottom: 20px;">
+    <div>
+        <h3>Feedback Types</h3>
+        <canvas id="feedbackTypeChart" width="400" height="400"></canvas>
+    </div>
+</div>
+
+<!-- Debugging: Display the passed data -->
+<pre>{{ feedback_chart_data }}</pre>
+
+<!-- Feedback Records -->
+<div>
+    <h2>Feedback Records</h2>
+    {{ block.super }}
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        // Sentiment Chart
+        const sentimentCtx = document.getElementById('sentimentChart').getContext('2d');
+        const sentimentChartData = {{ sentiment_chart_data|safe }};
+        new Chart(sentimentCtx, {
+            type: 'pie',
+            data: {
+                labels: sentimentChartData.labels,
+                datasets: [{
+                    data: sentimentChartData.data,
+                    backgroundColor: sentimentChartData.background_colors,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            },
+        });
+
+        // Feedback Type Chart
+        const feedbackCtx = document.getElementById('feedbackTypeChart').getContext('2d');
+        const feedbackChartData = {{ feedback_chart_data|safe }};
+        console.log(feedbackChartData); // Debugging: Log chart data to console
+        new Chart(feedbackCtx, {
+            type: 'pie',
+            data: {
+                labels: feedbackChartData.labels,
+                datasets: [{
+                    data: feedbackChartData.data,
+                    backgroundColor: feedbackChartData.background_colors,
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                    }
+                }
+            },
+        });
+    });
+</script>
+{% endblock %}

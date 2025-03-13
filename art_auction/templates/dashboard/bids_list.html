@@ -1,0 +1,190 @@
+{% extends './base.html' %}
+{% block title %}Bids - ARTIV{% endblock %}
+{% load static %}
+{% block links %}
+<link rel="stylesheet" href="{% static 'dashboard/css/ordermodel_list.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+    .filter-dropdown {
+        position: absolute;
+        top: 85px;
+        right: 1.5rem;
+    }
+    .filter-dropdown .dropdown-menu {
+        right: 0;
+        left: auto;
+    }
+    .modal-table th,
+    .modal-table td {
+        border-right: 1px solid #dee2e6; /* Apply vertical border between th and td */
+    }
+                                        
+    .modal-table th:last-child,
+    .modal-table td:last-child {
+        border-right: none; /* Remove border for the last column */
+    }
+    .small-image {
+        max-width: 80px; /* Define the maximum width for the image */
+        height: auto; /* Maintain aspect ratio */
+    }
+</style>
+{% endblock %}
+{% block content %}
+{% include './includes/header.html' %}
+{% include "art/arrow_button.html" %}
+{% load auth_extras %}
+
+    <div class="app-content pt-3 p-md-3 p-lg-4">
+        <div class="button-container">
+            <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+            <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+        </div>
+        {% comment %} {% if user.is_authenticated %}
+        <div class="home-button-container">
+            <a href="{% url 'art:index' %}" class="btn-home-order"><i class="fa-solid fa-house"></i> Home</a>
+        </div>
+        {% endif %} {% endcomment %}
+        <div class="container-fluid">
+            <h1 class="app-page-title">Bids List</h1>
+            
+            <div class="filter-dropdown">
+                <div class="dropdown-toggle" id="filterDropdown" style="cursor:pointer;" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa-solid fa-filter"></i> Filter
+                </div>
+                <div class="dropdown-menu" aria-labelledby="filterDropdown">
+                    <a class="dropdown-item" href="?filter=asc">Lowest Bid</a>
+                    <a class="dropdown-item" href="?filter=desc">Highest Bid</a>
+                </div>
+            </div>
+        <div class="row g-4 mb-4">
+            <div class="table-container">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col">Sr No</th>
+                            <th scope="col">Artworks</th>
+                            <th scope="col">Date</th>
+                            {% if user|has_group:"SellerGroup" %}
+                            <th scope="col">Bid placed By</th>
+                            {% endif %}
+                            <th scope="col">Latest Bid Placed</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bid in object_list %}
+                        <tr>
+                            <th scope="row">{{ forloop.counter }}</th>
+                            <td>
+                                <a href="#" class="artworks-order" data-toggle="modal" data-target="#productModal" data-product-id="{{ bid.product.id }}" data-product-name="{{ bid.product }}" data-product-image-url="{{ bid.product.product_image.url }}" data-product-dimensions="{{ bid.product.length_in_centimeters }} x {{ bid.product.width_in_centimeters }} cm" data-product-catalogue="{{ bid.product.product_cat }}" data-product-opening-bid="₹ {{ bid.product.opening_bid }}" data-last-bid="{{ bid.bid_amt }}">{{ bid.product }}</a>
+                            </td>
+                            <td>{{ bid.bid_date }}</td>
+                            {% if user|has_group:"SellerGroup" %}
+                            <td>{{ bid.user }}</td>
+                            {% endif %}
+                            <td>₹ {{ bid.bid_amt }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="5">
+                                <h3>No artworks to show</h3>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="productModal" tabindex="-1" role="dialog" aria-labelledby="productModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="productModalLabel"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <style>
+                        .modal-table th,
+                        .modal-table td {
+                            border-right: 1px solid #dee2e6; /* Apply vertical border between th and td */
+                        }
+                        .modal-table th:last-child,
+                        .modal-table td:last-child {
+                            border-right: none; /* Remove border for the last column */
+                        }
+                        .small-image {
+                            max-width: 80px; /* Define the maximum width for the image */
+                            height: auto; /* Maintain aspect ratio */
+                        }
+                    </style>
+                    <table class="table modal-table">
+                        <tbody>
+                            <tr>
+                                <th scope="row">Product Image</th>
+                                <td><img src="" class="img-fluid" alt="" id="productImage"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Dimensions</th>
+                                <td id="productDimensions"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Catalogue</th>
+                                <td id="productCatalogue"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Opening Bid</th>
+                                <td id="productOpeningBid"></td>
+                            </tr>
+                            <tr>
+                                <th scope="row">Last Bid</th>
+                                <td id="lastBid"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary_details" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+{% block js %}
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script>
+<script>
+$(document).ready(function(){
+    $('#productModal').on('show.bs.modal', function (event) {
+        var button = $(event.relatedTarget);
+        var productName = button.data('product-name');
+        var productImageUrl = button.data('product-image-url');
+        var productDimensions = button.data('product-dimensions');
+        var productCatalogue = button.data('product-catalogue');
+        var productOpeningBid = button.data('product-opening-bid');
+        var lastBid = "₹ " + button.data('last-bid');
+        
+        var modal = $(this);
+        modal.find('.modal-title').text(productName);
+        modal.find('#productImage').attr('src', productImageUrl).attr('alt', productName);
+        modal.find('#productDimensions').text(productDimensions);
+        modal.find('#productCatalogue').text(productCatalogue);
+        modal.find('#productOpeningBid').text(productOpeningBid);
+        modal.find('#lastBid').text(lastBid);
+    });
+});
+</script>
+{% endblock %}
+{% block jscript %}
+(function(){scroller();}());
+{% endblock %}

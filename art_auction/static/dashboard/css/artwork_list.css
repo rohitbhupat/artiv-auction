@@ -1,0 +1,204 @@
+body {
+    background-color: #f4ede4;
+    /* Soft white gray */
+    color: #2B2D42;
+    /* Deep charcoal gray */
+}
+
+body.dark-mode {
+    background-color: #161A1D;
+    /* Deep charcoal black */
+    color: #E8E8E8;
+    /* Soft white */
+}
+
+html:not(.loaded) {
+    visibility: hidden;
+    opacity: 0;
+}
+
+html.loaded {
+    visibility: visible;
+    opacity: 1;
+    transition: none;
+}
+
+.app-card {
+    transition: background-color 0.3s, color 0.3s;
+    /* Smooth transition for theme change */
+    background-color: #ffffff;
+    /* Default light mode background */
+    color: #000000;
+    /* Default light mode text color */
+}
+
+.artwork-card_list {
+    flex: 0 0 auto !important;
+    width: 25% !important;
+}
+
+/* Light Mode Hover */
+body.light-mode .artwork-card_list:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    transition: all 0.3s ease;
+}
+
+/* Dark Mode Hover */
+body.dark-mode .artwork-card_list:hover {
+    transform: scale(1.05);
+    box-shadow: 0 4px 10px rgba(255, 255, 255, 0.15);
+    /* Lighter shadow for dark mode */
+    transition: all 0.3s ease;
+}
+
+body.light-mode .artwork-card_list {
+    color: #000000;
+    /* Light mode text color for artworks */
+}
+
+body.dark-mode .artwork-card_list {
+    color: #ffffff;
+    /* Dark mode text color for artworks */
+}
+
+body.light-mode .app-card-doc {
+    color: #000000;
+    /* Light mode text color for card document */
+}
+
+.text-muted {
+    color: #cccccc !important;
+}
+
+body.dark-mode .app-card-doc {
+    color: #ffffff;
+    background-color: #212529;
+}
+
+body.dark-mode .app-card-doc .app-doc-meta {
+    font-size: .75rem;
+    color: #cccccc;
+    /* Slightly lighter color for meta text in dark mode */
+}
+
+.app-card-doc .app-doc-title {
+    color: #000000 !important;
+}
+
+body.dark-mode .app-card-doc .app-doc-title {
+    color: #ffffff !important;
+}
+
+body.dark-mode h4 {
+    color: #ffffff;
+    /* background-color: #212529; */
+}
+
+/* Modal Styles */
+.modal-content {
+    transition: background-color 0.3s, color 0.3s;
+    /* Smooth transition for theme change */
+}
+
+body.light-mode .modal-content {
+    background-color: #ffffff;
+    /* Light mode modal background */
+    color: #000000;
+    /* Light mode modal text color */
+}
+
+body.dark-mode .modal-content {
+    background-color: #161617;
+    /* Dark mode modal background */
+    color: #ffffff;
+    /* Dark mode modal text color */
+}
+
+.modal-header {
+    border-bottom: none;
+    /* Remove bottom border */
+}
+
+.modal-title {
+    color: inherit;
+    /* Use current text color */
+}
+
+.modal-footer .btn-danger {
+    background-color: #dc3545;
+    /* Light mode danger button color */
+}
+
+body.dark-mode .modal-footer .btn-danger {
+    background-color: #c0392b;
+    /* Dark mode danger button color */
+}
+
+.app-card-doc .app-doc-title a {
+    color: #212529 !important;
+}
+
+body.dark-mode .app-card-doc .app-doc-title a {
+    color: #ffffff !important;
+}
+
+.btn-update {
+    background: #ffffff !important;
+    /* Soft Warm Beige */
+    border: 0.5px solid black !important;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-update:hover {
+    background: #ffffff !important;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.btn-delete {
+    /* background: #d5bdaf !important; */
+    /* Soft Muted Beige */
+    /* color: #5a4b42 !important; */
+    /* Dark Text for Readability */
+    border: none !important;
+    border-radius: 8px;
+    /* Slightly Rounded */
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    /* Soft Shadow */
+}
+
+.btn-delete:hover {
+    overflow: hidden;
+    /* Slightly Darker Shade */
+    /* Enhanced Shadow */
+}
+
+/* Underline Effect */
+.btn-delete::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: 10%;
+    width: 0;
+    height: 2px;
+    background-color: #474747;
+    transition: all 0.4s ease-in-out;
+    transform: translateX(-50%);
+}
+
+/* Hover Effect */
+.btn-delete:hover::after {
+    width: 20%;
+}

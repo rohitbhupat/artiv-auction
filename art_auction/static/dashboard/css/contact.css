@@ -1,0 +1,169 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+.form-label {
+    color: black;
+}
+
+/* Dark mode */
+.dark-mode .form-label {
+    color: black;
+}
+
+.button-container {
+    position: absolute;
+    top: 85px;
+    /* Adjust the value to move vertically */
+    left: 2rem;
+    /* Adjust the value to move horizontally */
+}
+
+:root {
+    --background-color: #ece9e9;
+    --text-color: #000;
+    --link-color: #343434;
+    --link-hover-color: #000000;
+    --title-color: #000;
+    --contact-text-color: #000;
+    /* Added variable for contact text color */
+}
+
+.dark-mode {
+    --background-color: #2D2A32;
+    --text-color: #fff;
+    --link-color: #d8d8d8;
+    --link-hover-color: #ffffff;
+    --title-color: #fff;
+    --contact-text-color: #fff;
+    /* Added variable for contact text color in dark mode */
+}
+
+body {
+    background-color: var(--background-color);
+    color: var(--text-color);
+}
+
+.contact-title {
+    color: var(--title-color);
+}
+
+.container .col {
+    margin-bottom: 20px;
+}
+
+.container .col p {
+    margin-top: 10px;
+    font-size: 16px;
+}
+
+.vh-100_contact {
+    height: 72.5vh !important;
+}
+
+.contact_icon {
+    color: var(--contact-text-color);
+    /* Use the contact text color variable */
+    text-decoration: none;
+}
+
+.contact_icon:hover {
+    color: var(--contact-text-color);
+    /* Use the contact text color variable */
+}
+
+.container-fluid-contact {
+    margin-top: 10px;
+    color: (--contact-text-color);
+}
+
+.footer-container {
+    background-color: var(--background-color);
+    padding: 20px;
+    text-align: center;
+    color: var(--text-color);
+}
+
+.footer-content {
+    max-width: 70%;
+    margin: 0 auto;
+}
+
+.footer-links {
+    list-style: none;
+    padding: 0;
+}
+
+.footer-links li {
+    display: inline;
+    margin: 0 10px;
+}
+
+.footer-links a {
+    text-decoration: none;
+    color: var(--link-color);
+}
+
+.footer-links a:hover {
+    text-decoration: none;
+    color: var(--link-hover-color);
+}
+
+.open-sans-contact {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings: 100;
+}
+
+.poppins-regular-contact {
+    font-family: "Poppins", sans-serif;
+    font-weight: 500;
+    font-style: normal;
+}
+
+.poppins-regular-footer {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-style: normal;
+}
+.modal-content{
+    background-color: #ffffff !important;
+}
+/* Dark mode styling for modal */
+.dark-mode .modal-content {
+    background-color: #2c2c2c !important; /* Dark background for the modal */
+    color: #ffffff; /* White text color */
+    border: none;
+}
+
+.dark-mode .modal-header {
+    border-bottom: 1px solid #444;
+}
+
+.dark-mode .modal-title {
+    color: #ffffff; /* Modal title in white */
+}
+
+.dark-mode .form-label {
+    color: #cccccc; /* Form label in a lighter gray for readability */
+}
+
+.dark-mode .form-control {
+    background-color: #3a3a3a; /* Dark background for input fields */
+    color: #ffffff; /* White text color */
+    border: 1px solid #555; /* Border color for dark mode */
+}
+
+.dark-mode .form-control::placeholder {
+    color: #aaaaaa; /* Placeholder text in lighter gray */
+}
+
+.dark-mode .btn-primary {
+    background-color: #4a90e2; /* Bright blue for submit button */
+    border-color: #4a90e2;
+}
+
+.dark-mode .btn-primary:hover {
+    background-color: #357ab7; /* Darker shade for hover effect */
+    border-color: #357ab7;
+}

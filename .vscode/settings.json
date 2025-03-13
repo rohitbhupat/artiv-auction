@@ -1,0 +1,23 @@
+{
+    "cSpell.words": [
+        "ARTIV",
+        "ASGI",
+        "asgiref",
+        "elif",
+        "fillna",
+        "floatformat",
+        "isin",
+        "Kolkata",
+        "onchange",
+        "onclick",
+        "onsubmit",
+        "ordermodel",
+        "phash",
+        "REFERER",
+        "signup",
+        "viewdetails"
+    ],
+    "python.analysis.extraPaths": [
+        "./art_auction/art_auction"
+    ]
+}

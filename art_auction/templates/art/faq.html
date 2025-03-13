@@ -1,0 +1,121 @@
+{% extends './layout.html' %}
+{% load static %}
+{% block title %}FAQs - ARTIV{% endblock %}
+{% block css_file %}
+<link rel="stylesheet" href="{% static 'home/css/faq.css' %}" type="text/css">
+<script>
+    (function() {
+    const theme = localStorage.getItem('theme') || 'auto';
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDarkMode = theme === 'dark' || (theme === 'auto' && prefersDarkScheme);
+    
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add('light-mode');
+    }
+    })();
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+    .button-container {
+        position: absolute;
+        top: 85px; /* Adjust the value to move vertically */
+        left: 2rem; /* Adjust the value to move horizontally */
+    }
+</style>
+{% endblock %}
+{% block body %}
+{% load i18n %}
+
+{% include "./includes/navbar.html" %}
+<br>
+{% include "./arrow_button.html" %}
+<div class="button-container">
+    <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+    <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+</div>
+<div class="d-flex align-items-center justify-content-center vh-100_faq">
+    
+    <div class="container">
+        
+        <h1 class="open-sans-faq faq-title text-center">Frequently Asked Questions (FAQs)</h1>
+        <div class="accordion poppins-regular-faq" id="faqAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingOne">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                        What is "ARTIV"?
+                    </button>
+                </h2>
+                <div id="collapseOne" class="accordion-collapse collapse" aria-labelledby="headingOne" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        "ARTIV" is a platform that will give some emerging Artists who would otherwise not be able to share their work online the chance to do so. Auctions are popular because both buyers and sellers believe they will get a pretty good deal buying or selling assets.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingTwo">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                        How do I place a Bid?
+                    </button>
+                </h2>
+                <div id="collapseTwo" class="accordion-collapse collapse" aria-labelledby="headingTwo" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        To place a bid, click on the Details button of the product you like, enter the bid amount, and then click on "Bid Now" button.
+                        <br>
+                        <b>Note:</b> You must be logged in to the website to place a bid.
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingThree">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                        What is an "Unsold Items" section?
+                    </button>
+                </h2>
+                <div id="collapseThree" class="accordion-collapse collapse" aria-labelledby="headingThree" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        If a Seller uploads an artwork and if it is not sold till the time of auction, then it will directly go to the "Unsold Items" section. From there, you can still bid on that artwork and buy it.                    
+                    </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFour">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFour" aria-expanded="false" aria-controls="collapseThree">
+                        What is “Become a seller” section? 
+                    </button>
+                </h2>
+                <div id="collapseFour" class="accordion-collapse collapse" aria-labelledby="headingFour" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        If someone wants to sell the artworks, then he/she can Register as a Seller in "Become a Seller" section.                      </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingFive">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseFive" aria-expanded="false" aria-controls="collapseThree">
+                        What is meant by “View in AR”?
+                    </button>
+                </h2>
+                <div id="collapseFive" class="accordion-collapse collapse" aria-labelledby="headingFive" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        "ARTIV" provides you with the feature of AR technology (Augmented Reality), where you can see how the Artwork will look at your home.                     </div>
+                </div>
+            </div>
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="headingSix">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#collapseSix" aria-expanded="false" aria-controls="collapseThree">
+                        Why there is only 1 Quantity of Artwork?                    
+                    </button>
+                </h2>
+                <div id="collapseSix" class="accordion-collapse collapse" aria-labelledby="headingSix" data-bs-parent="#faqAccordion">
+                    <div class="accordion-body">
+                        There is only 1 quantity of artwork because the artworks here are NFTs (Non-Fungible Tokens). The Seller has only 1 copy of the Artwork.                     </div>
+                </div>
+            </div>
+            
+        </div>
+    </div>
+</div>
+<script src="{% static 'js/theme.js' %}"></script>
+{% endblock %}

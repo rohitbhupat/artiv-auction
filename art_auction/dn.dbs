@@ -1,0 +1,527 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="art" id="Project-24e2" database="Sqlite" >
+	<schema name="Default" >
+		<table name="art_category" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="cat_name" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<index name="pk_art_category" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="art_order" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="order_date" type="DATE" jt="91" mandatory="y" />
+			<column name="order_qty" type="INTEGER" jt="4" mandatory="y" />
+			<column name="order_price" type="REAL" jt="8" mandatory="y" />
+			<column name="product_id" type="BIGINT" jt="-5" mandatory="y" />
+			<index name="pk_art_order" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="art_order_product_id_9c57f640" unique="NORMAL" >
+				<column name="product_id" />
+			</index>
+			<fk name="Fk" to_schema="Default" to_table="art_product" >
+				<fk_column name="product_id" pk="id" />
+			</fk>
+		</table>
+		<table name="art_payment" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="payment_mode" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<column name="date" type="DATE" jt="91" mandatory="y" />
+			<column name="success_status" type="BOOLEAN" jt="-7" mandatory="y" />
+			<column name="order_id" type="BIGINT" jt="-5" mandatory="y" />
+			<index name="pk_art_payment" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="art_payment_order_id_34ebdfe6" unique="NORMAL" >
+				<column name="order_id" />
+			</index>
+			<fk name="Fk_0" to_schema="Default" to_table="art_order" >
+				<fk_column name="order_id" pk="id" />
+			</fk>
+		</table>
+		<table name="art_product" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="product_name" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<column name="product_price" type="INTEGER" jt="4" mandatory="y" />
+			<column name="product_qty" type="INTEGER" jt="4" mandatory="y" />
+			<column name="product_image" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="product_cat_id" type="BIGINT" jt="-5" mandatory="y" />
+			<column name="user_id" type="INTEGER" jt="4" mandatory="y" />
+			<index name="pk_art_product" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="art_product_product_cat_id_046a6e24" unique="NORMAL" >
+				<column name="product_cat_id" />
+			</index>
+			<index name="art_product_user_id_cb4bf32e" unique="NORMAL" >
+				<column name="user_id" />
+			</index>
+			<fk name="Fk_1" to_schema="Default" to_table="art_category" >
+				<fk_column name="product_cat_id" pk="id" />
+			</fk>
+			<fk name="Fk_2" to_schema="Default" to_table="auth_user" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+		</table>
+		<table name="auth_group" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="name" type="VARCHAR" length="150" jt="12" mandatory="y" />
+			<index name="pk_auth_group" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_auth_group_name" unique="UNIQUE_KEY" >
+				<column name="name" />
+			</index>
+		</table>
+		<table name="auth_group_permissions" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="group_id" type="INTEGER" jt="4" mandatory="y" />
+			<column name="permission_id" type="INTEGER" jt="4" mandatory="y" />
+			<index name="pk_auth_group_permissions" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="auth_group_permissions_group_id_permission_id_0cd325b0_uniq" unique="UNIQUE_INDEX" >
+				<column name="group_id" />
+				<column name="permission_id" />
+			</index>
+			<index name="auth_group_permissions_group_id_b120cbf9" unique="NORMAL" >
+				<column name="group_id" />
+			</index>
+			<index name="auth_group_permissions_permission_id_84c5c92e" unique="NORMAL" >
+				<column name="permission_id" />
+			</index>
+			<fk name="Fk_3" to_schema="Default" to_table="auth_group" >
+				<fk_column name="group_id" pk="id" />
+			</fk>
+			<fk name="Fk_4" to_schema="Default" to_table="auth_permission" >
+				<fk_column name="permission_id" pk="id" />
+			</fk>
+		</table>
+		<table name="auth_permission" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="content_type_id" type="INTEGER" jt="4" mandatory="y" />
+			<column name="codename" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="name" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<index name="pk_auth_permission" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="auth_permission_content_type_id_codename_01ab375a_uniq" unique="UNIQUE_INDEX" >
+				<column name="content_type_id" />
+				<column name="codename" />
+			</index>
+			<index name="auth_permission_content_type_id_2f476e4b" unique="NORMAL" >
+				<column name="content_type_id" />
+			</index>
+			<fk name="Fk_5" to_schema="Default" to_table="django_content_type" >
+				<fk_column name="content_type_id" pk="id" />
+			</fk>
+		</table>
+		<table name="auth_user" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="password" type="VARCHAR" length="128" jt="12" mandatory="y" />
+			<column name="last_login" type="DATETIME" jt="93" />
+			<column name="is_superuser" type="BOOLEAN" jt="-7" mandatory="y" />
+			<column name="username" type="VARCHAR" length="150" jt="12" mandatory="y" />
+			<column name="last_name" type="VARCHAR" length="150" jt="12" mandatory="y" />
+			<column name="email" type="VARCHAR" length="254" jt="12" mandatory="y" />
+			<column name="is_staff" type="BOOLEAN" jt="-7" mandatory="y" />
+			<column name="is_active" type="BOOLEAN" jt="-7" mandatory="y" />
+			<column name="date_joined" type="DATETIME" jt="93" mandatory="y" />
+			<column name="first_name" type="VARCHAR" length="150" jt="12" mandatory="y" />
+			<index name="pk_auth_user" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="unq_auth_user_username" unique="UNIQUE_KEY" >
+				<column name="username" />
+			</index>
+		</table>
+		<table name="auth_user_groups" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="user_id" type="INTEGER" jt="4" mandatory="y" />
+			<column name="group_id" type="INTEGER" jt="4" mandatory="y" />
+			<index name="pk_auth_user_groups" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="auth_user_groups_user_id_group_id_94350c0c_uniq" unique="UNIQUE_INDEX" >
+				<column name="user_id" />
+				<column name="group_id" />
+			</index>
+			<index name="auth_user_groups_user_id_6a12ed8b" unique="NORMAL" >
+				<column name="user_id" />
+			</index>
+			<index name="auth_user_groups_group_id_97559544" unique="NORMAL" >
+				<column name="group_id" />
+			</index>
+			<fk name="Fk_6" to_schema="Default" to_table="auth_user" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+			<fk name="Fk_7" to_schema="Default" to_table="auth_group" >
+				<fk_column name="group_id" pk="id" />
+			</fk>
+		</table>
+		<table name="auth_user_user_permissions" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="user_id" type="INTEGER" jt="4" mandatory="y" />
+			<column name="permission_id" type="INTEGER" jt="4" mandatory="y" />
+			<index name="pk_auth_user_user_permissions" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="auth_user_user_permissions_user_id_permission_id_14a6b632_uniq" unique="UNIQUE_INDEX" >
+				<column name="user_id" />
+				<column name="permission_id" />
+			</index>
+			<index name="auth_user_user_permissions_user_id_a95ead1b" unique="NORMAL" >
+				<column name="user_id" />
+			</index>
+			<index name="auth_user_user_permissions_permission_id_1fbb5f2c" unique="NORMAL" >
+				<column name="permission_id" />
+			</index>
+			<fk name="Fk_8" to_schema="Default" to_table="auth_user" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+			<fk name="Fk_9" to_schema="Default" to_table="auth_permission" >
+				<fk_column name="permission_id" pk="id" />
+			</fk>
+		</table>
+		<table name="django_admin_log" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="object_id" type="TEXT" jt="-1" />
+			<column name="object_repr" type="VARCHAR" length="200" jt="12" mandatory="y" />
+			<column name="action_flag" type="SMALLINT" jt="5" mandatory="y" unsigned="y" />
+			<column name="change_message" type="TEXT" jt="-1" mandatory="y" />
+			<column name="content_type_id" type="INTEGER" jt="4" />
+			<column name="user_id" type="INTEGER" jt="4" mandatory="y" />
+			<column name="action_time" type="DATETIME" jt="93" mandatory="y" />
+			<index name="pk_django_admin_log" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="django_admin_log_content_type_id_c4bce8eb" unique="NORMAL" >
+				<column name="content_type_id" />
+			</index>
+			<index name="django_admin_log_user_id_c564eba6" unique="NORMAL" >
+				<column name="user_id" />
+			</index>
+			<constraint name="Cns_django_admin_log_action_flag" >
+				<string><![CDATA["action_flag" >= 0]]></string>
+			</constraint>
+			<fk name="Fk_10" to_schema="Default" to_table="django_content_type" >
+				<fk_column name="content_type_id" pk="id" />
+			</fk>
+			<fk name="Fk_11" to_schema="Default" to_table="auth_user" >
+				<fk_column name="user_id" pk="id" />
+			</fk>
+		</table>
+		<table name="django_content_type" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="app_label" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<column name="model" type="VARCHAR" length="100" jt="12" mandatory="y" />
+			<index name="pk_django_content_type" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+			<index name="django_content_type_app_label_model_76bd3d3b_uniq" unique="UNIQUE_INDEX" >
+				<column name="app_label" />
+				<column name="model" />
+			</index>
+		</table>
+		<table name="django_migrations" spec="" >
+			<column name="id" type="INTEGER" jt="4" mandatory="y" >
+				<identity><![CDATA[AUTOINCREMENT]]></identity>
+			</column>
+			<column name="app" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<column name="name" type="VARCHAR" length="255" jt="12" mandatory="y" />
+			<column name="applied" type="DATETIME" jt="93" mandatory="y" />
+			<index name="pk_django_migrations" unique="PRIMARY_KEY" >
+				<column name="id" />
+			</index>
+		</table>
+		<table name="django_session" spec="" >
+			<column name="session_key" type="VARCHAR" length="40" jt="12" mandatory="y" />
+			<column name="session_data" type="TEXT" jt="-1" mandatory="y" />
+			<column name="expire_date" type="DATETIME" jt="93" mandatory="y" />
+			<index name="pk_django_session" unique="PRIMARY_KEY" >
+				<column name="session_key" />
+			</index>
+			<index name="django_session_expire_date_a5c62663" unique="NORMAL" >
+				<column name="expire_date" />
+			</index>
+		</table>
+	</schema>
+	<connector name="Sqlite" database="Sqlite" driver_class="org.sqlite.JDBC" driver_jar="sqlite-jdbc-3.36.0.3.jar" driver_desc="Standard" host="localhost" port="7210" instance="D:/project/art_auction_django/art_auction/db.sqlite3" useSystemProxy="false" />
+	<layout name="Default Layout" id="Layout-1d1a" joined_routing="y" show_column_type="y" show_relation="columns" >
+		<comment><![CDATA[art table structure]]></comment>
+		<entity schema="Default" name="art_category" color="3986C1" x="544" y="384" />
+		<entity schema="Default" name="art_order" color="3986C1" x="816" y="144" />
+		<entity schema="Default" name="art_payment" color="3986C1" x="576" y="496" />
+		<entity schema="Default" name="art_product" color="3986C1" x="528" y="144" />
+		<entity schema="Default" name="auth_group" color="3986C1" x="304" y="192" />
+		<entity schema="Default" name="auth_group_permissions" color="3986C1" x="320" y="272" />
+		<entity schema="Default" name="auth_permission" color="3986C1" x="224" y="640" />
+		<entity schema="Default" name="auth_user" color="C1D8EE" x="48" y="80" />
+		<entity schema="Default" name="auth_user_groups" color="3986C1" x="320" y="80" />
+		<entity schema="Default" name="auth_user_user_permissions" color="3986C1" x="48" y="416" />
+		<entity schema="Default" name="django_admin_log" color="3986C1" x="272" y="768" />
+		<entity schema="Default" name="django_content_type" color="3986C1" x="48" y="736" />
+		<entity schema="Default" name="django_migrations" color="3986C1" x="48" y="592" />
+		<entity schema="Default" name="django_session" color="3986C1" x="304" y="416" />
+		<group name="Group_" color="C4E0F9" >
+			<entity schema="Default" name="art_category" />
+		</group>
+		<script name="SQL_Editor" id="Editor-12c0" language="SQL" >
+			<string><![CDATA[CREATE TABLE art_category ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	cat_name             VARCHAR(255) NOT NULL    
+ );
+
+CREATE TABLE auth_group ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	name                 VARCHAR(150) NOT NULL    ,
+	CONSTRAINT unq_auth_group_name UNIQUE ( name )
+ );
+
+CREATE TABLE auth_user ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	password             VARCHAR(128) NOT NULL    ,
+	last_login           DATETIME     ,
+	is_superuser         BOOLEAN NOT NULL    ,
+	username             VARCHAR(150) NOT NULL    ,
+	last_name            VARCHAR(150) NOT NULL    ,
+	email                VARCHAR(254) NOT NULL    ,
+	is_staff             BOOLEAN NOT NULL    ,
+	is_active            BOOLEAN NOT NULL    ,
+	date_joined          DATETIME NOT NULL    ,
+	first_name           VARCHAR(150) NOT NULL    ,
+	CONSTRAINT unq_auth_user_username UNIQUE ( username )
+ );
+
+CREATE TABLE auth_user_groups ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	user_id              INTEGER NOT NULL    ,
+	group_id             INTEGER NOT NULL    ,
+	FOREIGN KEY ( user_id ) REFERENCES auth_user( id )  ,
+	FOREIGN KEY ( group_id ) REFERENCES auth_group( id )  
+ );
+
+CREATE UNIQUE INDEX auth_user_groups_user_id_group_id_94350c0c_uniq ON auth_user_groups ( user_id, group_id );
+
+CREATE INDEX auth_user_groups_user_id_6a12ed8b ON auth_user_groups ( user_id );
+
+CREATE INDEX auth_user_groups_group_id_97559544 ON auth_user_groups ( group_id );
+
+CREATE TABLE django_content_type ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	app_label            VARCHAR(100) NOT NULL    ,
+	model                VARCHAR(100) NOT NULL    
+ );
+
+CREATE UNIQUE INDEX django_content_type_app_label_model_76bd3d3b_uniq ON django_content_type ( app_label, model );
+
+CREATE TABLE django_migrations ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	app                  VARCHAR(255) NOT NULL    ,
+	name                 VARCHAR(255) NOT NULL    ,
+	applied              DATETIME NOT NULL    
+ );
+
+CREATE TABLE django_session ( 
+	session_key          VARCHAR(40) NOT NULL  PRIMARY KEY  ,
+	session_data         TEXT NOT NULL    ,
+	expire_date          DATETIME NOT NULL    
+ );
+
+CREATE INDEX django_session_expire_date_a5c62663 ON django_session ( expire_date );
+
+CREATE TABLE art_product ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	product_name         VARCHAR(255) NOT NULL    ,
+	product_price        INTEGER NOT NULL    ,
+	product_qty          INTEGER NOT NULL    ,
+	product_image        VARCHAR(100) NOT NULL    ,
+	product_cat_id       BIGINT NOT NULL    ,
+	user_id              INTEGER NOT NULL    ,
+	FOREIGN KEY ( product_cat_id ) REFERENCES art_category( id )  ,
+	FOREIGN KEY ( user_id ) REFERENCES auth_user( id )  
+ );
+
+CREATE INDEX art_product_product_cat_id_046a6e24 ON art_product ( product_cat_id );
+
+CREATE INDEX art_product_user_id_cb4bf32e ON art_product ( user_id );
+
+CREATE TABLE auth_permission ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	content_type_id      INTEGER NOT NULL    ,
+	codename             VARCHAR(100) NOT NULL    ,
+	name                 VARCHAR(255) NOT NULL    ,
+	FOREIGN KEY ( content_type_id ) REFERENCES django_content_type( id )  
+ );
+
+CREATE UNIQUE INDEX auth_permission_content_type_id_codename_01ab375a_uniq ON auth_permission ( content_type_id, codename );
+
+CREATE INDEX auth_permission_content_type_id_2f476e4b ON auth_permission ( content_type_id );
+
+CREATE TABLE auth_user_user_permissions ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	user_id              INTEGER NOT NULL    ,
+	permission_id        INTEGER NOT NULL    ,
+	FOREIGN KEY ( user_id ) REFERENCES auth_user( id )  ,
+	FOREIGN KEY ( permission_id ) REFERENCES auth_permission( id )  
+ );
+
+CREATE UNIQUE INDEX auth_user_user_permissions_user_id_permission_id_14a6b632_uniq ON auth_user_user_permissions ( user_id, permission_id );
+
+CREATE INDEX auth_user_user_permissions_user_id_a95ead1b ON auth_user_user_permissions ( user_id );
+
+CREATE INDEX auth_user_user_permissions_permission_id_1fbb5f2c ON auth_user_user_permissions ( permission_id );
+
+CREATE TABLE django_admin_log ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	object_id            TEXT     ,
+	object_repr          VARCHAR(200) NOT NULL    ,
+	action_flag          SMALLINT NOT NULL    ,
+	change_message       TEXT NOT NULL    ,
+	content_type_id      INTEGER     ,
+	user_id              INTEGER NOT NULL    ,
+	action_time          DATETIME NOT NULL    ,
+	FOREIGN KEY ( content_type_id ) REFERENCES django_content_type( id )  ,
+	FOREIGN KEY ( user_id ) REFERENCES auth_user( id )  ,
+	CHECK ( "action_flag" >= 0 )
+ );
+
+CREATE INDEX django_admin_log_content_type_id_c4bce8eb ON django_admin_log ( content_type_id );
+
+CREATE INDEX django_admin_log_user_id_c564eba6 ON django_admin_log ( user_id );
+
+CREATE TABLE art_order ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	order_date           DATE NOT NULL    ,
+	order_qty            INTEGER NOT NULL    ,
+	order_price          REAL NOT NULL    ,
+	product_id           BIGINT NOT NULL    ,
+	FOREIGN KEY ( product_id ) REFERENCES art_product( id )  
+ );
+
+CREATE INDEX art_order_product_id_9c57f640 ON art_order ( product_id );
+
+CREATE TABLE art_payment ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	payment_mode         VARCHAR(255) NOT NULL    ,
+	date                 DATE NOT NULL    ,
+	success_status       BOOLEAN NOT NULL    ,
+	order_id             BIGINT NOT NULL    ,
+	FOREIGN KEY ( order_id ) REFERENCES art_order( id )  
+ );
+
+CREATE INDEX art_payment_order_id_34ebdfe6 ON art_payment ( order_id );
+
+CREATE TABLE auth_group_permissions ( 
+	id                   INTEGER NOT NULL  PRIMARY KEY AUTOINCREMENT ,
+	group_id             INTEGER NOT NULL    ,
+	permission_id        INTEGER NOT NULL    ,
+	FOREIGN KEY ( group_id ) REFERENCES auth_group( id )  ,
+	FOREIGN KEY ( permission_id ) REFERENCES auth_permission( id )  
+ );
+
+CREATE UNIQUE INDEX auth_group_permissions_group_id_permission_id_0cd325b0_uniq ON auth_group_permissions ( group_id, permission_id );
+
+CREATE INDEX auth_group_permissions_group_id_b120cbf9 ON auth_group_permissions ( group_id );
+
+CREATE INDEX auth_group_permissions_permission_id_84c5c92e ON auth_group_permissions ( permission_id );
+
+INSERT INTO auth_user( password, last_login, is_superuser, username, last_name, email, is_staff, is_active, date_joined, first_name ) VALUES ( 'pbkdf2_sha256$390000$ArLEDRfnopngMxpN30Xaa3$XvTT+wPvkfr72gQa/TEZKVt3JTMYrJLUW8Hx/kiohlE=', '2022-12-07', 1, 'art_admin', '', '', 1, 1, '2022-12-07', '');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'admin', 'logentry');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'auth', 'permission');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'auth', 'group');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'auth', 'user');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'contenttypes', 'contenttype');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'sessions', 'session');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'art', 'order');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'art', 'category');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'art', 'product');
+INSERT INTO django_content_type( app_label, model ) VALUES ( 'art', 'payment');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'contenttypes', '0001_initial', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0001_initial', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'admin', '0001_initial', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'admin', '0002_logentry_remove_auto_add', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'admin', '0003_logentry_add_action_flag_choices', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'contenttypes', '0002_remove_content_type_name', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0002_alter_permission_name_max_length', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0003_alter_user_email_max_length', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0004_alter_user_username_opts', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0005_alter_user_last_login_null', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0006_require_contenttypes_0002', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0007_alter_validators_add_error_messages', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0008_alter_user_username_max_length', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0009_alter_user_last_name_max_length', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0010_alter_group_name_max_length', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0011_update_proxy_permissions', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'auth', '0012_alter_user_first_name_max_length', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'sessions', '0001_initial', '2022-12-07');
+INSERT INTO django_migrations( app, name, applied ) VALUES ( 'art', '0001_initial', '2022-12-07');
+INSERT INTO django_session( session_key, session_data, expire_date ) VALUES ( 'tu6hx2shrnfl7nl0wwpzq6joxrqnl3kr', '.eJxVjMsOwiAQRf-FtSGAUx4u3fcbyMwAUjU0Ke3K-O_apAvd3nPOfYmI21rj1vMSpyQuQovT70bIj9x2kO7YbrPkua3LRHJX5EG7HOeUn9fD_Tuo2Ou3NuhIOfB2cFqHorQnSwQZ0ScDPoBny8G5pIcSmLM6kwdVVDaqcAIQ7w_Mwjeo:1p2q6g:Vw8MNN5KR3mL6ez3eq7LhVzQmQL1TBWNzYcIhOvSX4M', '2022-12-21');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 1, 'add_logentry', 'Can add log entry');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 1, 'change_logentry', 'Can change log entry');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 1, 'delete_logentry', 'Can delete log entry');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 1, 'view_logentry', 'Can view log entry');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 2, 'add_permission', 'Can add permission');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 2, 'change_permission', 'Can change permission');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 2, 'delete_permission', 'Can delete permission');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 2, 'view_permission', 'Can view permission');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 3, 'add_group', 'Can add group');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 3, 'change_group', 'Can change group');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 3, 'delete_group', 'Can delete group');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 3, 'view_group', 'Can view group');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 4, 'add_user', 'Can add user');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 4, 'change_user', 'Can change user');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 4, 'delete_user', 'Can delete user');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 4, 'view_user', 'Can view user');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 5, 'add_contenttype', 'Can add content type');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 5, 'change_contenttype', 'Can change content type');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 5, 'delete_contenttype', 'Can delete content type');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 5, 'view_contenttype', 'Can view content type');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 6, 'add_session', 'Can add session');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 6, 'change_session', 'Can change session');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 6, 'delete_session', 'Can delete session');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 6, 'view_session', 'Can view session');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 7, 'add_order', 'Can add order');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 7, 'change_order', 'Can change order');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 7, 'delete_order', 'Can delete order');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 7, 'view_order', 'Can view order');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 8, 'add_category', 'Can add category');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 8, 'change_category', 'Can change category');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 8, 'delete_category', 'Can delete category');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 8, 'view_category', 'Can view category');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 9, 'add_product', 'Can add product');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 9, 'change_product', 'Can change product');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 9, 'delete_product', 'Can delete product');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 9, 'view_product', 'Can view product');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 10, 'add_payment', 'Can add payment');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 10, 'change_payment', 'Can change payment');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 10, 'delete_payment', 'Can delete payment');
+INSERT INTO auth_permission( content_type_id, codename, name ) VALUES ( 10, 'view_payment', 'Can view payment');]]></string>
+		</script>
+	</layout>
+</project>
