@@ -52,7 +52,7 @@ class ArtworkAdmin(admin.ModelAdmin):
             return (
                 (None, {
                     'fields': (
-                        'sale_type', 'product_name', 'opening_bid', 'product_cat',
+                        'sale_type', 'product_name', 'opening_bid', 'product_cat', 'purchase_category',
                         'product_qty', 'product_image', 'model_360', 'end_date',
                         'dimension_unit', 'length_in_centimeters', 'width_in_centimeters', 'foot', 'inches',
                     )
@@ -60,6 +60,7 @@ class ArtworkAdmin(admin.ModelAdmin):
             )
     
         return super().get_fieldsets(request, obj)
+
 
 class RefundAdmin(admin.ModelAdmin):
     form = RefundAdminForm
