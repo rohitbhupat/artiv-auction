@@ -99,7 +99,7 @@ DATABASES = {
         'NAME': 'db_artiv',
         'USER': 'user_artive',
         'PASSWORD': 'db_pass123',
-    #    'HOST': 'db',
+        'HOST': 'db',
         'PORT': '5432', # default PostgreSQL port
     }
 }
