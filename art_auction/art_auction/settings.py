@@ -96,9 +96,9 @@ TEMPLATES = [
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'artiv',
-        'USER': 'postgres',
-        'PASSWORD': 'postgres@123',
+        'NAME': 'db_artiv',
+        'USER': 'user_artive',
+        'PASSWORD': 'db_pass123',
     #    'HOST': 'db',
         'PORT': '5432', # default PostgreSQL port
     }
