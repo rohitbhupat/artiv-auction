@@ -12,21 +12,23 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from pathlib import Path
 import os
+from dotenv import load_dotenv
 
-# Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+load_dotenv(BASE_DIR / '.env')
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-9h4yh!-gh-o6f=i$tk##t=10icszoi^0t123z@abadl3ri9nvh'
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['artiv.co.in', 'www.artiv.co.in', '3.7.228.96']
 
 
 # Application definition
@@ -71,7 +73,16 @@ MIDDLEWARE = [
     'django.middleware.locale.LocaleMiddleware',
     'corsheaders.middleware.CorsMiddleware'
 ]
-CORS_ALLOW_ALL_ORIGINS = True  # Allow all for debugging (set to False in production)
+# =========================
+# CORS
+# =========================
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "https://artiv.co.in",
+    "https://www.yourdomain.c",
+]
 ROOT_URLCONF = 'art_auction.urls'
 
 TEMPLATES = [
@@ -96,19 +107,19 @@ TEMPLATES = [
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.postgresql',
-    #     'NAME': 'db_artiv',
-    #     'USER': 'user_artive',
-    #     'PASSWORD': 'db_pass123',
-    #     'HOST': '82.25.108.214',
-    #     'PORT': '5432', # default PostgreSQL port
-    # }
-    
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': os.getenv('DB_NAME'),
+        'USER': os.getenv('DB_USER'),
+        'PASSWORD': os.getenv('DB_PASSWORD'),
+        'HOST': '82.25.108.214',
+        'PORT': '5432', # default PostgreSQL port
     }
+    
+    # 'default': {
+    #     'ENGINE': 'django.db.backends.sqlite3',
+    #     'NAME': BASE_DIR / 'db.sqlite3',
+    # }
 }
 
 
@@ -185,8 +196,8 @@ LOCALE_PATHS = [
     os.path.join(BASE_DIR, 'locale'),
 ]
 
-RAZORPAY_KEY_ID = 'rzp_test_T11ZkFVMifmxv3'
-RAZORPAY_KEY_SECRET = 'wHbpMa9s7EwoREWsaW640Cxd'
+RAZORPAY_KEY_ID = os.getenv("RAZORPAY_KEY_ID")
+RAZORPAY_KEY_SECRET = os.getenv("RAZORPAY_KEY_SECRET")
 
 import smtplib
 
@@ -197,7 +208,7 @@ EMAIL_PORT = 587  # Use 465 for SSL, 587 for TLS
 EMAIL_USE_TLS = True  # Use TLS for encryption
 EMAIL_USE_SSL = False  # Ensure this is False if TLS is enabled
 EMAIL_HOST_USER = 'no-reply@artiv.co.in'  # Your Hostinger email
-EMAIL_HOST_PASSWORD = 'Webmail@2025'  # Your email password
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_HOST_PASSWORD")  # Your email password
 DEFAULT_FROM_EMAIL = 'no-reply@artiv.co.in'  # Default sender email
 
 # server = smtplib.SMTP(EMAIL_HOST, EMAIL_PORT)
