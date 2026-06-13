@@ -81,8 +81,23 @@ CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGINS = [
     "https://artiv.co.in",
-    "https://www.yourdomain.c",
+    "https://www.artiv.co.in",
 ]
+
+# =========================
+# HTTPS SECURITY
+# =========================
+
+SECURE_SSL_REDIRECT = True
+
+SESSION_COOKIE_SECURE = True
+
+CSRF_COOKIE_SECURE = True
+
+SECURE_PROXY_SSL_HEADER = (
+    'HTTP_X_FORWARDED_PROTO',
+    'https'
+)
 ROOT_URLCONF = 'art_auction.urls'
 
 TEMPLATES = [
@@ -112,7 +127,7 @@ DATABASES = {
         'NAME': os.getenv('DB_NAME'),
         'USER': os.getenv('DB_USER'),
         'PASSWORD': os.getenv('DB_PASSWORD'),
-        'HOST': '82.25.108.214',
+        'HOST': 'localhost',
         'PORT': '5432', # default PostgreSQL port
     }
     
