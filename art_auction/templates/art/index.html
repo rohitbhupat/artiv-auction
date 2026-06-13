@@ -1,0 +1,144 @@
+{% extends './layout.html' %}
+{% load static %}
+
+{% block title %}Home - ARTIV{% endblock %}
+{% block description %}{% endblock %}
+{% block robot %}index, follow{% endblock %}
+
+{% block css_file %}
+<link rel="stylesheet" href="{% static 'dashboard/css/index.css' %}" type="text/css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<link rel="stylesheet" href="{% static 'dashboard/css/contact.css' %}" type="text/css">
+{% comment %} <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> {% endcomment %}
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-oFTSz9PifpC+I4viE/rGMifTHgt2+2UeFwUDBZ+GV9GpEaqGfIR52ggKDibjU6t4" crossorigin="anonymous">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Calistoga&family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+    @font-face {
+        font-family: 'Masthan';
+        src: url("{% static 'images/fonts/Masthan.ttf' %}") format('truetype');
+        font-weight: 600;
+    }
+</style>
+<script>
+    (function() {
+    const theme = localStorage.getItem('theme') || 'auto';
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDarkMode = theme === 'dark' || (theme === 'auto' && prefersDarkScheme);
+    
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add('light-mode');
+    }
+    })();
+</script>
+{% endblock %}
+
+{% block body %}
+{% load i18n %}
+{% load static %}
+
+{% include "./includes/navbar.html" with cat_list=catalogue_list %}
+
+<br>
+{% comment %} <div class="button-container">
+<i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+<i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+</div> {% endcomment %}
+<br>
+<!-- Bootstrap Carousel -->
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel" data-bs-interval="10000">
+    <!-- Carousel Items -->
+    <div class="carousel-inner">
+        <div class="carousel-item active">
+            <img src="{% static 'images/Banners/Coming soon (auction).gif' %}" class="d-block w-100 cropped-image img-fluid" alt="First slide">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'images/Banners/360 degree view banner.gif' %}" class="d-block w-100 cropped-image img-fluid" alt="Second slide">
+        </div>
+        <div class="carousel-item">
+            <img src="{% static 'images/Banners/our features.gif' %}" class="d-block w-100 cropped-image img-fluid" alt="Third slide">
+        </div>
+    </div>
+
+    {% comment %} <!-- Navigation Arrows -->
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Previous</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Next</span>
+    </button> {% endcomment %}
+</div>
+
+<!-- Our Categories Section -->
+<div class="container text-center heading">
+    <br>
+    <h2 class="fw-bold our-categories-title">Our Categories</h2>
+    <div class="row mt-4">
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <a href="/cat/1/"><img src="{% static 'images/Auction Category/NATURE/with signs/A_Cottage.png' %}" class="rounded-circle" width="175" height="175" alt="Category 1">
+                <a href="/cat/1/" style="cursor:pointer;" class="fw-normal mt-3 d-block category-link name-calistoga-regular">NATURE's Palette <i class="fas fa-arrow-right"></i></a>
+            </a>
+        </div><!-- /.col-lg-4 -->
+
+        
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <a href="cat/2/">
+            <img src="{% static 'images/Auction Category/FLORAL/Stockphoto.jpg' %}" class="rounded-circle" width="175" height="175" alt="Category 2">
+            <a href="cat/2/" style="cursor:pointer;" class="fw-normal mt-3 d-block category-link name-calistoga-regular">Canvas of Blooms (FLORAL) <i class="fas fa-arrow-right"></i></a>
+            </a>
+        </div><!-- /.col-lg-4 -->
+        
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <a href="cat/3/">
+                <img src="{% static 'images/Auction Category/FANTASY/with signs/Crown of Clouds.png' %}" class="rounded-circle" width="175" height="175" alt="Category 3">
+            </a>
+            <a href="cat/3/" style="cursor:pointer;" class="fw-normal mt-3 d-block category-link name-calistoga-regular">Mystic Horizons (FANTASY) <i class="fas fa-arrow-right"></i></a>
+        </div><!-- /.col-lg-4 -->
+        
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <a href="cat/4/">
+                <img src="{% static 'images/Auction Category/ABSTRACT ARTS/Flower.png' %}" class="rounded-circle" width="175" height="175" alt="Category 4">
+                <a href="cat/4/" style="cursor:pointer;" class="fw-normal mt-3 d-block category-link name-calistoga-regular">Echoes of ABSTRACT <i class="fas fa-arrow-right"></i></a>
+            </a>
+        </div><!-- /.col-lg-4 -->
+        
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <a href="cat/5/">
+                <img src="{% static 'images/Auction Category/PORTRAIT/with signs/Echoes of Color.png' %}" class="rounded-circle" width="175" height="175" alt="Category 5">
+                <a href="cat/5/" style="cursor:pointer;" class="fw-normal mt-3 d-block category-link name-calistoga-regular">Colorful PORTRAITS <i class="fas fa-arrow-right"></i></a>
+            </a>
+        </div><!-- /.col-lg-4 -->
+        
+        <div class="col-12 col-sm-6 col-md-4 col-lg-3 col-xl-2">
+            <a href="cat/6/">
+                <img src="{% static 'images/Auction Category/SCULPTURES/U_N_i.png' %}" class="rounded-circle" width="175" height="175" alt="Category 6">
+                <a href="cat/6/" style="cursor:pointer;" class="fw-normal mt-3 d-block category-link name-calistoga-regular">SCULPTERRA <i class="fas fa-arrow-right"></i>
+            </a>
+        </div><!-- /.col-lg-4 -->
+    </div><!-- /.row -->
+</div>
+
+    {% comment %} <button onclick="topFunction()" id="back-to-top-btn" title="Go to top"><i class="fa-solid fa-angles-up"></i></button> {% endcomment %}
+</div>
+
+<br>
+
+<script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+{% comment %} <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.bundle.min.js"></script> {% endcomment %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-kq6hET3JvoZDb1BUgIfqlbENxEmNfNIcufO2IeX6GCiuTo+7lPr1jtj2mSYGpUBt" crossorigin="anonymous"></script>
+<script src="{% static 'js/theme.js' %}"></script>
+{% comment %} 
+<script>
+    // Functions for back and forward navigation
+    function goBack() {
+        window.history.back();
+    }
+
+    function goForward() {
+        window.history.forward();
+    }
+</script> {% endcomment %}
+{% endblock %}

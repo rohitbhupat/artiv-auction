@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>View in 360 - ARTIV</title>
+    <!-- Import A-Frame Library -->
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/donmccurdy/aframe-extras@6.1.1/dist/aframe-extras.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        a-scene {
+            height: 100vh;
+            width: 100vw;
+        }
+    </style>
+</head>
+
+<body>
+    <a-scene>
+        <!-- Adding a 360° Image for the Sky -->
+        <a-sky src="{{ image }}" rotation="0 -90 0"></a-sky>
+
+        <!-- Interactive Camera -->
+        <a-entity position="0 1.6 0" camera look-controls="enabled: true" wasd-controls="enabled: false"></a-entity>
+    </a-scene>
+</body>
+
+</html>

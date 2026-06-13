@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% load static %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>AR Artwork Display</title>
+
+    <!-- WebXR & Three.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/webxr-polyfill@latest/build/webxr-polyfill.min.js"></script>
+
+    <style>
+        body { margin: 0; overflow: hidden; }
+        .ar-info-overlay {
+            position: absolute;
+            top: 15px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-size: 16px;
+            z-index: 999;
+            font-weight: bold;
+        }
+        #start-ar {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #007bff;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+
+    {% if user.is_authenticated %}
+    
+<!-- Dimension Info Overlay -->
+<div class="ar-info-overlay">
+    <h5>Dimensions:</h5>
+    {% if length_in_centimeters and width_in_centimeters %}
+        <!-- Display in centimeters -->
+        <p>{{ length_in_centimeters }} x {{ width_in_centimeters }} cm</p>
+    {% else %}
+        <!-- Display in feet and inches -->
+        <p>{{ foot }} ft x {{ inches }} in</p>
+    {% endif %}
+</div>
+
+    <!-- AR Start Button -->
+    <button id="start-ar">Start AR</button>
+
+    <script>
+        document.getElementById('start-ar').addEventListener('click', async function () {
+            console.log("🔍 Checking WebXR support...");
+    
+            if (!navigator.xr) {
+                alert("❌ WebXR not supported on this device/browser. Using fallback mode.");
+                console.error("WebXR API not available.");
+                return;
+            }
+    
+            console.log("✅ WebXR supported. Attempting to start AR...");
+            const canvas = document.createElement("canvas");
+            document.body.appendChild(canvas);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true, canvas, powerPreference: "high-performance" });
+            renderer.xr.enabled = true;
+    
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+    
+            // Lighting
+            const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+            scene.add(light);
+    
+            // Load image texture
+            const loader = new THREE.TextureLoader();
+            const texture = loader.load("{{ MEDIA_URL }}{{ image }}");
+    
+            // Convert dimensions to meters (either from cm or feet/inches)
+            let widthInMeters, heightInMeters;
+    
+            {% if length_in_centimeters and width_in_centimeters %}
+                widthInMeters = {{ width_in_centimeters }} / 100;
+                heightInMeters = {{ length_in_centimeters }} / 100;
+            {% elif foot_width and inch_width and foot_length and inch_length %}
+                widthInMeters = ({{ foot_width }} * 0.3048) + ({{ inch_width }} * 0.0254);
+                heightInMeters = ({{ foot_length }} * 0.3048) + ({{ inch_length }} * 0.0254);
+            {% else %}
+                console.error("❌ Dimensions are missing!");
+                alert("❌ Artwork dimensions are missing!");
+                return;
+            {% endif %}
+    
+            // Check if image is landscape or portrait
+            const isLandscape = widthInMeters > heightInMeters;
+    
+            // Correct Plane Geometry (Keep Correct Aspect Ratio)
+            const geometry = new THREE.PlaneGeometry(
+                isLandscape ? widthInMeters : heightInMeters, 
+                isLandscape ? heightInMeters : widthInMeters
+            );
+    
+            const material = new THREE.MeshBasicMaterial({ map: texture, side: THREE.DoubleSide });
+            const plane = new THREE.Mesh(geometry, material);
+            plane.position.set(0, 1.5, -2); // Adjust height and position
+    
+            scene.add(plane);
+    
+            try {
+                const session = await navigator.xr.requestSession("immersive-ar", { requiredFeatures: ["local-floor"] });
+                console.log("🎉 AR session started!");
+                renderer.xr.setSession(session);
+                const xrRefSpace = await session.requestReferenceSpace("local-floor");
+    
+                function animate() {
+                    renderer.setAnimationLoop(() => {
+                        renderer.render(scene, camera);
+                    });
+                }
+                animate();
+            } catch (error) {
+                console.error("⚠️ Error starting AR session:", error);
+                alert("❌ Failed to start AR: " + error.message);
+            }
+        });
+    </script>
+    
+
+    {% else %}
+        {% include '404.html' %}
+    {% endif %}
+
+</body>
+</html>

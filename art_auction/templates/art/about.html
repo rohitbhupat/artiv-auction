@@ -1,0 +1,296 @@
+{% extends './layout.html' %} {% load static %} {% block title%}About Us - ARTIV{% endblock %}{% block css_file %}
+<link rel="stylesheet" href="{% static 'home/css/about.css'%}" type="text/css">
+
+{% endblock %} {% block body %} {% load i18n %}
+<script>
+    (function() {
+    const theme = localStorage.getItem('theme') || 'auto';
+    const prefersDarkScheme = window.matchMedia("(prefers-color-scheme: dark)").matches;
+    const isDarkMode = theme === 'dark' || (theme === 'auto' && prefersDarkScheme);
+    
+    if (isDarkMode) {
+        document.body.classList.add('dark-mode');
+    } else {
+        document.body.classList.add('light-mode');
+    }
+    })();
+</script>
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+    .button-container {
+        position: absolute;
+        top: 85px; /* Adjust the value to move vertically */
+        left: 2rem; /* Adjust the value to move horizontally */
+    }
+</style>
+{% include "./includes/navbar.html" %}
+<br>
+{% comment %} {% include "./arrow_button.html" %}
+<div class="button-container">
+    <i class="fa-solid fa-arrow-left" style="cursor:pointer; font-size:1.4rem; margin-right:10px" onclick="goBack()"></i>
+    <i class="fa-solid fa-arrow-right" style="cursor:pointer; font-size:1.4rem; margin-right:15px" onclick="goForward()"></i>
+</div> {% endcomment %}
+<div class="container-fluid">
+    <h1 class="text-center open-sans-about">ABOUT US</h1>
+<div class="container-fluid"
+        style="background-image: url({% static 'images/assets/ARTIV_GIF.gif' %});height:35rem;background-repeat:no-repeat;background-size:75%;background-position:center;">
+        </div>
+        <div class="container">
+        <h1 class="open-sans-heading" style="position: relative;top: 75%;text-align: center;">THE EPITOME OF CREATIVITY</h1>
+        <hr class="bold-line">
+        <p class="poppins-regular-text">
+            "ARTIV" is for Art Collecting and Bidding.
+            As the leading marketplace for Art by the world’s emerging and established Artists, we have made it easy for
+            new and experienced collectors to discover, buy, and sell art. Everything you will need to collect art,
+            you’ll find on here.
+        </p>
+        <hr class="bold-line">
+        <div class="d-flex justify-content-between align-items-center">
+            <h1 class="open-sans-heading" style="margin:auto;">About Our Arts</h1>
+            <h5 class="about-links" style="position: absolute; right: 2rem; top: 61rem;">
+                <!-- Direct Purchase Link -->
+                <a href="#" id="direct-purchase-btn" onclick="showPage(2);" style="display: inline-block;">
+                    Direct Purchase Option <i class="fas fa-arrow-right"></i>
+                </a>
+        
+                <!-- Back Link (initially hidden using CSS or JS) -->
+                <a href="javascript:void(0);" id="back-link" onclick="showPage(1)" style="display: none; margin-left: 10px;">
+                    <i class="fas fa-arrow-left"></i> Back
+                </a>
+            </h5>
+        </div>        
+    <div id="page-1">
+
+        <div class="row art_desc">
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/cat/1">NATURE's Palette</a></strong></i> transforms the beauty of the natural world into creative expressions. 
+                    By engaging with nature, artists draw inspiration and incorporate its wonders into their work, whether through abstract or realistic forms. 
+                    This art can showcase nature’s splendor, reflect scientific insights, or explore our deep connection to the environment.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=1 %}"><img src="{% static 'images/assets/Watercolor_Painting.jpg' %}" alt="Watercolor Painting" width="100%" height="200px"></a>
+            </div>
+        </div>
+        
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=3 %}" class="catalog-ref"><img src="{% static 'images/assets/about1.jpg' %}" alt="about5" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/cat/3">Mystic Horizons(FANTASY) </a></strong></i> creates magical worlds and mythical creatures, transporting viewers to enchanting realms full of wonder and imagination.
+                </p>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <div class="row art_desc">
+
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/cat/2">Canvas of Blooms(FLORAL)</a></strong></i> transforms flowers and plant materials into beautiful, balanced arrangements. Combining craft and creativity, it connects emotionally with viewers and has been cherished since ancient Egypt.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=2 %}" class="catalog-ref"><img src="{% static 'images/assets/True_Beauty.png' %}" alt="about6" width="100%" height="200px"></a>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=4 %}" class="catalog-ref"><img src="{% static 'images/assets/Fall_in_LOVE_with_MATHS.png' %}" alt="about7" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/cat/4">Echoes of ABSTRACT</a></strong></i> uses shapes, colors, and forms to evoke emotions and experiences, breaking away from realistic representation. It focuses on feelings and ideas rather than depicting the real world.
+                </p>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <div class="row art_desc">
+
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/cat/5">Colorful PORTRAITS</a></strong></i> captures faces through painting, sculpture, or photography. An ancient tradition dating back over 5,000 years, it was once the only way to preserve someone's likeness before photography.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=5 %}" class="catalog-ref"><img src="{% static 'images/assets/about5.jpg' %}" alt="about6" width="100%" height="200px"></a>
+            </div>
+        </div>
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:catalog_products' id=6 %}"><img src="{% static 'images/Auction Category/SCULPTURES/BUDDHA.png' %}" alt="Sculpture" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/cat/6">SCULPTERRA</a></strong></i> is a three-dimensional art form that shapes materials like stone, metal, or clay into expressive designs.  
+                    It often explores physical space, offering viewers different perspectives.  
+                    Sculptures can be abstract, realistic, or conceptual in nature.
+                </p>
+            </div>
+        </div>
+        <hr class="bold-line">
+    </div>
+    <div id="page-2" style="display: none;">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:purchase_category_products' id=1 %}"><img src="{% static '/images/Purchase Category/DOODLES/Foodie Me.png' %}" alt="Doodle" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/purchase-cat/1/">Doodle</a></strong></i> art features spontaneous drawings, often made casually or absentmindedly.  
+                    It embraces creativity without strict rules or planning.  
+                    Doodles can evolve into detailed, whimsical, or even symbolic artwork.
+                </p>
+            </div>
+        </div>
+
+
+            <hr class="bold-line">
+            <div class="row art_desc">
+                <div class="col-md-8">
+                    <p class="poppins-regular-text">
+                        <i><strong class="about-links"><a href="/purchase-cat/2/">The Blooming VESSEL</a></strong></i> vessels are containers crafted with artistic intent, often in clay or glass.  
+                        They blend utility with beauty, telling cultural or historical stories.  
+                        Their forms range from traditional to highly experimental.
+                    </p>
+                </div>
+                <div class="col-md-4">
+                    <a href="{% url 'art:purchase_category_products' id=2 %}"><img src="{% static 'images/Purchase Category/FLOWER VASE ART/POTTERY.jpeg' %}" alt="Vessel" width="100%" height="200px"></a>
+                </div>
+                
+            </div>
+            <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:purchase_category_products' id=3 %}"><img src="{% static 'images/Purchase Category/POP ART/POPART.webp' %}" alt="Pop" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/purchase-cat/3/">POPScale</a></strong></i> art reflects popular culture through bold colors and graphic styles.  
+                    It draws from comics, advertisements, and celebrity imagery.  
+                    Pop art challenges fine art by blending it with mainstream culture.
+                </p>
+            </div>
+        </div>
+
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/purchase-cat/4/">Art on the CUP</a></strong></i> elevates a simple object into a creative medium.  
+                    Artists experiment with materials, textures, and forms.  
+                    From functional ceramics to abstract interpretations, cups tell personal or cultural stories.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:purchase_category_products' id=4 %}"><img src="{% static 'images/Purchase Category/MUG ART/MUG.jpeg' %}" alt="Cup" width="100%" height="200px"></a>
+            </div>
+        </div>
+
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:purchase_category_products' id=5 %}"><img src="{% static 'images/Purchase Category/RESIN ART/resin.jpeg' %}" alt="Resin" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/purchase-cat/5/">RESIN Reverie</a></strong></i> involves pouring or molding epoxy to create glossy, vibrant designs.  
+                    It offers a unique depth and shine, often resembling glass.  
+                    Resin is popular in jewelry, home décor, and abstract art.
+                </p>
+            </div>
+        </div>
+
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/purchase-cat/6/">Mud & Muse(POTTERY)</a></strong></i> is one of the oldest art forms, shaping clay into functional and decorative pieces.  
+                    It can be wheel-thrown or hand-built, then glazed and fired.  
+                    Pottery celebrates tactile craftsmanship and cultural heritage.
+                </p>
+            </div>
+            <div class="col-md-4">
+                <a href="{% url 'art:purchase_category_products' id=6 %}"><img src="{% static 'images/Purchase Category/POTTERY ART/VASE.jpeg' %}" alt="Pottery" width="100%" height="200px"></a>
+            </div>
+        </div>
+
+        <hr class="bold-line">
+        <div class="row art_desc">
+            <div class="col-md-4">
+                <a href="{% url 'art:purchase_category_products' id=7 %}"><img src="{% static 'images/Purchase Category/MANDALAS/MANDALA.jpeg' %}" alt="Mandala" width="100%" height="200px"></a>
+            </div>
+            <div class="col-md-8">
+                <p class="poppins-regular-text">
+                    <i><strong class="about-links"><a href="/purchase-cat/7/">MANDALA Mirage</a></strong></i> mandalas are circular designs symbolizing harmony and balance.  
+                    Rooted in spiritual traditions, they feature intricate patterns.  
+                    Creating or viewing mandalas is often meditative and calming.
+                </p>
+            </div>
+        </div>
+        <hr class="bold-line">
+    </div> <!-- This closes the main .container -->
+    <br>
+    
+        <div class="container-fluid"
+            style="background-image: url({% static 'images/assets/AR_GIF.gif' %});height:35rem;background-repeat:no-repeat;background-size:75%; background-position:center">
+            </div>
+        <h1 class="open-sans-about" style="position: relative;top: 75%;text-align: center;">"Reality ReImagined: Explore Art in a Whole New Dimension"</h1>
+        <hr class="bold-line">
+        <div>
+            <h4 class="heading-4 open-sans-heading">Transform your Art Experience with "ARTIV"</h4>
+            <p class="poppins-regular-text">
+            "With "ARTIV", you can use Augmented Reality (AR) to see your chosen piece come to life right where you plan to display it. 
+            Explore the art in your actual environment and make an informed decision with this cutting-edge technology!"
+            </p>
+        </div>
+    </div>
+</div>
+    </div>
+    
+</div>
+
+<script src="{% static 'js/theme.js' %}"></script>
+<script>
+    function showPage(pageNumber) {
+        const page1 = document.getElementById('page-1');
+        const page2 = document.getElementById('page-2');
+        const directPurchaseBtn = document.getElementById('direct-purchase-btn');
+        const backLink = document.getElementById('back-link');
+
+        // Save page in localStorage
+        localStorage.setItem('currentPage', pageNumber);
+
+        if (pageNumber === 2) {
+            if (page1) page1.style.display = 'none';
+            if (page2) {
+                page2.style.display = 'block';
+                window.scrollTo({ top: page2.offsetTop, behavior: 'smooth' });
+            }
+            if (directPurchaseBtn) directPurchaseBtn.style.display = 'none';
+            if (backLink) backLink.style.display = 'inline-block';
+
+        } else {
+            if (page1) {
+                page1.style.display = 'block';
+                window.scrollTo({ top: page1.offsetTop, behavior: 'smooth' });
+            }
+            if (page2) page2.style.display = 'none';
+            if (directPurchaseBtn) directPurchaseBtn.style.display = 'inline-block';
+            if (backLink) backLink.style.display = 'none';
+        }
+    }
+
+    // Restore state on page load
+    window.addEventListener('DOMContentLoaded', () => {
+        const savedPage = parseInt(localStorage.getItem('currentPage')) || 1;
+        showPage(savedPage);
+    });
+</script>
+{% endblock %}
