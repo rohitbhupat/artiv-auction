@@ -1,0 +1,46 @@
+.poppins-regular-login {
+  font-family: "Poppins", sans-serif;
+  font-weight: 425;
+  font-style: normal;
+}
+
+.card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: #ffffff84 !important;
+  background-clip: border-box;
+  border-radius: .25rem;
+}
+
+.form-control {
+  border: 1px solid #7c7c7c !important;
+  background-color: rgba(255, 255, 255, 0.84) !important;
+}
+
+/* Default styles */
+.card-title {
+  font-size: 1.2rem;
+  text-align: center;
+}
+
+.text-end {
+  text-align: center !important;
+}
+
+.btn-warning_login {
+  font-weight: 400;
+  color: #4a4a4a;
+  border-color: #ffc107 !important;
+  text-decoration: none;
+  width: 100%;
+}
+
+.btn-warning_login:hover {
+  color: #000000;
+  background-color: #ffc107;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out, background-color 0.2s ease-in-out, border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+}

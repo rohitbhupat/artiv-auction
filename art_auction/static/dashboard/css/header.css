@@ -1,0 +1,330 @@
+/* Open Sans Font Settings */
+.open-sans-navbar {
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: 100;
+}
+.open-sans-catalog {
+  font-family: "Open Sans", sans-serif;
+  font-optical-sizing: auto;
+  font-weight: 500;
+  font-style: normal;
+  font-variation-settings: 100;
+}
+/* General Header and Utility Styles */
+.app-utility-item:last-child {
+  margin-top: -5px !important;
+  margin-right: 20px;
+}
+
+.dropdown-mode {
+  margin-left: -50px !important;
+}
+
+.dropdown-toggle {
+  text-decoration: none !important;
+  color: #000000 !important;
+  cursor: pointer;
+}
+
+body.dark-mode .dropdown-toggle {
+  color: #ffffff !important;
+}
+
+.app-utility-item .dropdown-menu {
+  top: 35px !important;
+  margin: -14px !important;
+}
+
+.app-utility-item {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.button-container {
+  position: absolute;
+  top: 85px;
+  left: 17.5rem;
+}
+
+.btn-home {
+  position: absolute;
+  top: 85px;
+  right: 1.5rem;
+  color: #212529;
+}
+
+.btn-home:hover {
+  color: black;
+}
+
+body.dark-mode .btn-home {
+  color: #fff;
+}
+
+.theme {
+  margin-right: 20px;
+}
+
+.dropdown-menu-mode {
+  position: absolute;
+  min-width: 70px !important;
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  top: 30px;
+  left: 18px !important;
+}
+
+body.dark-mode .dropdown-menu-mode {
+  display: none;
+}
+
+.dropdown-menu-mode.show {
+  display: block;
+}
+
+.app-header {
+  background: #ffffff !important;
+  padding-top: 1rem !important;
+}
+
+body.dark-mode .app-header {
+  background: #161617 !important;
+}
+
+.app-sidepanel {
+  border-right: none !important;
+  transition: background-color 0.3s ease;
+}
+
+.app-sidepanel .sidepanel-inner {
+  background: #ffffff !important;
+}
+
+body.dark-mode .app-sidepanel .sidepanel-inner {
+  background: #161617 !important;
+}
+
+.app-sidepanel-footer {
+  background: #ffffff !important;
+}
+
+body.dark-mode .app-sidepanel-footer {
+  background: #161617 !important;
+}
+
+.app-nav .nav-link {
+  color: #000000 !important;
+}
+
+body.dark-mode .app-nav .nav-link {
+  color: #ffffff !important;
+}
+
+/* Navbar Styles from navbar.css */
+.navbar {
+  background-color: #161617;
+  padding-top: 1rem !important;
+}
+
+.navbar .navbar-brand {
+  color: #ffffff;
+}
+
+.navbar .nav-link {
+  color: #898383;
+}
+
+.navbar .nav-link:hover {
+  color: #ffffff;
+}
+
+/* Show dropdown menu on hover */
+.navbar-nav .nav-item.dropdown:hover .dropdown-menu {
+  display: block;
+  visibility: visible;
+  opacity: 1;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  background-color: var(--dropdown-bg, #ffffff);
+  min-width: 160px;
+  border: 1px solid rgba(0, 0, 0, 0.1); /* Light border for light mode */
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+  border-color: none !important;
+}
+
+.dropdown-menu a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.dropdown-menu a:hover {
+  color: white !important;
+  background-color: #212529 !important;
+  transition: background-color 0.1s, color 0.1s;
+}
+
+/* Light Mode */
+body.light-mode .navbar {
+  background-color: #ffffff;
+  color: #000;
+}
+
+body.light-mode .dropdown-menu {
+  --dropdown-bg: #f9f9f9;
+}
+
+body.light-mode .navbar .navbar-brand {
+  color: #000;
+}
+
+body.light-mode .navbar .nav-link {
+  color: #424141;
+}
+
+body.light-mode .navbar .nav-link:hover {
+  color: #000;
+}
+
+/* Dark Mode */
+body.dark-mode {
+  background-color: #1e1e1e;
+  color: #fff;
+}
+
+body.dark-mode .dropdown-menu {
+  border: 1px solid rgba(255, 255, 255, 0.2); /* Light border for dark mode */
+  background-color: #343a40;
+}
+
+body.dark-mode .navbar .navbar-brand {
+  color: #fff;
+}
+
+body.dark-mode .navbar .nav-link {
+  color: #898383;
+}
+
+body.dark-mode .navbar .nav-link:hover {
+  color: #ffffff;
+}
+
+body.dark-mode .dropdown-menu a {
+  color: white;
+}
+
+body.dark-mode .dropdown-item {
+  color: white;
+}
+
+:root {
+  --border-color: black;
+}
+
+.dark-mode {
+  --border-color: white;
+}
+
+.bold-line {
+  border-bottom: 2px solid var(--border-color);
+}
+
+/* Theme Toggle */
+.theme-dropdown {
+  position: relative;
+}
+
+.theme-icon {
+  font-size: 20px;
+  color: #000;
+  cursor: pointer;
+}
+
+body.dark-mode .theme-icon {
+  color: #fff;
+}
+
+.theme-dropdown:hover .theme-icon {
+  color: #007bff;
+}
+
+body.dark-mode .theme-dropdown:hover .theme-icon {
+  color: #0dcaf0;
+}
+
+.dropdown-menu .dropdown-item {
+  padding: 10px 20px;
+  font-size: 14px;
+  color: #000000;
+  text-decoration: none;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+body.dark-mode .dropdown-menu .dropdown-item {
+  color: #ffffff;
+}
+
+.dropdown-menu .dropdown-item:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+body.dark-mode .dropdown-menu .dropdown-item:hover {
+  background-color: #495057;
+}
+
+/* Modal Content Styles */
+.modal-content {
+  background-color: #ffffff;
+}
+
+body.dark-mode .modal-content {
+  background-color: #161617;
+  color: #ffffff;
+}
+
+.modal-header {
+  border-bottom: none;
+}
+
+.modal-title {
+  color: #000000;
+}
+
+body.dark-mode .modal-title {
+  color: #ffffff;
+}
+
+body.dark-mode .btn {
+  background-color: #444;
+  color: #ffffff;
+}
+
+body.dark-mode .btn-danger {
+  background-color: #ff1900;
+}
+
+.btn-close {
+  background-color: #ffffff !important;
+}
+
+body.dark-mode .btn-close {
+  color: #ffffff !important;
+}
+
+/* Adjust for Small Devices */
+@media (max-width: 768px) {
+  .dropdown-menu {
+    position: static;
+    width: 100%;
+    border-radius: 0;
+  }
+}

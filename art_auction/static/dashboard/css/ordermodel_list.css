@@ -1,0 +1,69 @@
+.artworks-order {
+  color: black !important;
+  text-decoration: none !important;
+}
+
+/* Dark Mode Styles */
+body.dark-mode .artworks-order {
+  color: #c7c7c7 !important; /* Light gray for better contrast in dark mode */
+}
+
+/* Light Mode Table Styles */
+.table {
+  color: #000000; /* Black text color */
+  background-color: rgba(231, 231, 231, 0.9); /* Slightly transparent light background */
+  border-collapse: collapse; /* Merge borders for distinct lines */
+  margin: 0 auto; /* Center inside the container */
+  border-radius: 5px; /* Optional: rounded corners */
+  border: 1px solid rgba(200, 200, 200, 0.9); /* Outer border for the table */
+}
+
+.table th,
+.table tr,
+.table td {
+  border: 1px solid rgba(68, 68, 68, 0.9) !important; /* Visible gridlines in light mode */
+}
+
+/* Dark Mode Table Styles */
+body.dark-mode .table {
+  color: #c7c7c7 !important; /* Light gray text color */
+  background-color: rgba(30, 30, 30, 0.9); /* Slightly transparent dark background */
+  border-collapse: collapse; /* Merge borders for distinct lines */
+  margin: 0 auto;
+  border-radius: 5px;
+  border: 1px solid rgba(68, 68, 68, 0.9); /* Outer border for the table */
+}
+
+body.dark-mode .table th,
+body.dark-mode .table tr,
+body.dark-mode .table td {
+  border: 1px solid rgba(120, 120, 120, 1) !important; /* Visible gridlines in dark mode */
+}
+
+/* Buttons and Dropdown Styles in Dark Mode */
+body.dark-mode .btn-light {
+  background-color: #2c2c2c;
+}
+
+body.dark-mode .btn-light:hover {
+  background-color: #2c2c2c;
+}
+
+body.dark-mode .dropdown-menu {
+  background-color: #333;
+  color: white;
+}
+
+body.dark-mode .modal-content {
+  background-color: #2c2c2c;
+  color: white;
+}
+
+/* Close Button Styles */
+button.close {
+  color: black !important;
+}
+
+body.dark-mode button.close {
+  color: white !important;
+}

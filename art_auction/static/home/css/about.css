@@ -1,0 +1,258 @@
+/* --------------------------------------------- */
+/* FONT STYLES */
+/* --------------------------------------------- */
+.poppins-regular-text {
+    font-family: "Poppins", sans-serif;
+    font-weight: 400;
+    font-size: 1rem;
+    line-height: 1.8;
+}
+
+.open-sans-about,
+.open-sans-heading {
+    font-family: "Open Sans", sans-serif;
+    font-weight: 700;
+}
+
+.open-sans-heading {
+    font-size: 2rem;
+}
+
+.open-sans-about {
+    font-size: 2.5rem;
+}
+
+/* --------------------------------------------- */
+/* IMAGE HOVER EFFECT */
+/* --------------------------------------------- */
+.art_desc img {
+    width: 100%;
+    height: auto;
+    opacity: 0.5;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.art_desc img:hover {
+    transform: scale(1.05);
+    opacity: 1;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* --------------------------------------------- */
+/* THEME SUPPORT */
+/* --------------------------------------------- */
+.dark-mode h1,
+.dark-mode h4 {
+    color: white;
+}
+
+.light-mode h1,
+.light-mode h4 {
+    color: black;
+}
+
+/* --------------------------------------------- */
+/* LINKS */
+/* --------------------------------------------- */
+.catalog-ref {
+    color: black;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.catalog-ref:hover {
+    text-decoration: underline;
+}
+
+body.dark-mode .catalog-ref {
+    color: white;
+}
+
+body.dark-mode .catalog-ref:hover {
+    color: white;
+}
+
+.about-links a {
+    text-decoration: none !important;
+    color: rgb(70, 70, 70) !important;
+}
+
+body.dark-mode .about-links a {
+    color: rgb(193, 193, 193) !important;
+}
+
+.about-links:hover a {
+    text-decoration: none !important;
+    color: rgb(0, 0, 0) !important;
+}
+
+body.dark-mode .about-links:hover a {
+    color: rgb(255, 255, 255) !important;
+}
+
+/* --------------------------------------------- */
+/* RESET & ALIGNMENT */
+/* --------------------------------------------- */
+body,
+h1,
+h4,
+p {
+    margin: 0;
+    padding: 0;
+}
+
+h1,
+h4 {
+    text-align: center;
+}
+
+.container-fluid h1,
+.container-fluid h4 {
+    margin-top: 20px;
+}
+
+.container-fluid p {
+    margin-top: 15px;
+    line-height: 1.6;
+}
+
+/* --------------------------------------------- */
+/* IMAGE SECTION SPACING */
+/* --------------------------------------------- */
+.art_desc {
+    padding: 40px 0;
+}
+
+/* --------------------------------------------- */
+/* HEADER BACKGROUND IMAGE */
+/* --------------------------------------------- */
+.container-fluid.background-image {
+    background-repeat: no-repeat;
+    background-size: cover;
+    height: 300px;
+    position: relative;
+}
+
+.container-fluid.background-image h1 {
+    color: brown;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+}
+
+/* --------------------------------------------- */
+/* SECTION DIVIDER */
+/* --------------------------------------------- */
+.bold-line {
+    border-bottom: 2px solid black;
+    margin: 2rem 0;
+}
+
+/* --------------------------------------------- */
+/* AR IMAGE SECTION STYLING */
+/* --------------------------------------------- */
+.container-fluid.ar-section {
+    background-repeat: no-repeat;
+    background-size: 75%;
+    background-position: center;
+    height: 35rem;
+    position: relative;
+}
+
+.container-fluid.ar-section h1 {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: brown;
+    text-align: center;
+}
+
+/* --------------------------------------------- */
+/* PARAGRAPH CONTAINER */
+/* --------------------------------------------- */
+.pt3 {
+    padding-top: 20px;
+}
+
+/* --------------------------------------------- */
+/* RESPONSIVENESS */
+/* --------------------------------------------- */
+
+/* Tablets */
+@media screen and (max-width: 768px) {
+    .art_desc {
+        padding: 20px 0;
+    }
+
+    .open-sans-heading {
+        font-size: 1.5rem;
+    }
+
+    .open-sans-about {
+        font-size: 2rem;
+    }
+
+    .container-fluid.background-image h1 {
+        font-size: 1.5rem;
+    }
+
+    .container-fluid.ar-section {
+        height: 28rem;
+        background-size: 85%;
+    }
+
+    .container-fluid.ar-section h1 {
+        font-size: 1.5rem;
+    }
+}
+
+/* Mobile */
+@media screen and (max-width: 576px) {
+    .container-fluid h1 {
+        font-size: 1.3rem;
+        margin-top: 1rem;
+    }
+
+    .container-fluid h4 {
+        font-size: 1rem;
+        margin-top: 1rem;
+    }
+
+    .container-fluid p {
+        font-size: 0.95rem;
+        margin-top: 10px;
+    }
+
+    .open-sans-heading {
+        font-size: 1.25rem;
+    }
+
+    .open-sans-about {
+        font-size: 1.75rem;
+    }
+
+    .pt3 {
+        padding-top: 1rem;
+    }
+
+    .container-fluid.ar-section {
+        height: 20rem;
+        background-size: cover !important;
+    }
+
+    .container-fluid.ar-section h1 {
+        font-size: 1.25rem !important;
+        top: 50%;
+    }
+}
+@media (max-width: 768px) {
+    .about-links {
+        position: static !important;
+        display: block !important;
+        margin-top: 1rem;
+        text-align: center;
+    }
+}

@@ -1,0 +1,25 @@
+.app-card {
+    position: relative;
+    background: #fff !important;
+    border-radius: .25rem;
+}
+
+body.dark-mode .app-card {
+    position: relative;
+    background: #212529 !important;
+    border-radius: .25rem;
+}
+
+.btn-confirm_delete {
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+}
+
+.btn-confirm_delete {
+    overflow: hidden;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.251);
+}

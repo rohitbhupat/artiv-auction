@@ -1,0 +1,61 @@
+.fieldWrapper{
+    display: flex;
+    flex-direction: column;
+    padding: 4px 20px;
+}
+
+.fieldWrapper label{
+    font-weight: 500;
+    color: black;
+}
+
+.fieldWrapper input,select{
+    padding: 5px 10px;
+    border-radius: 5px;
+    border: 1px solid grey;
+}
+.poppins-regular-order {
+    font-family: "Poppins", sans-serif;
+    font-weight: 425;
+    font-style: normal;
+}
+/* Dark mode specific styles for input fields and textarea */
+body.dark-mode .fieldWrapper input,
+body.dark-mode .fieldWrapper select,
+body.dark-mode .fieldWrapper textarea {
+    background-color: #2c2c2c !important; /* Dark background */
+    color: white;               /* Light text */
+    border: 1px solid #555;     /* Darker border */
+}
+
+body.dark-mode .fieldWrapper label {
+    color: #bbb; /* Lighter label color for dark mode */
+}
+
+/* Light mode specific styles for input fields and textarea */
+body.light-mode .fieldWrapper input,
+body.light-mode .fieldWrapper select,
+body.light-mode .fieldWrapper textarea {
+    background-color: #ffffff !important; /* Light background */
+    color: black;               /* Dark text */
+    border: 1px solid #ccc;     /* Light border */
+}
+
+body.light-mode .fieldWrapper label {
+    color: black; /* Dark label color for light mode */
+}
+
+/* Styling for the input fields in both modes */
+.fieldWrapper input,
+.fieldWrapper select,
+.fieldWrapper textarea {
+    padding: 10px 12px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* Styling for the textarea to maintain consistency with inputs */
+.fieldWrapper textarea {
+    height: 100px; /* Adjust height as needed */
+    resize: none; /* Prevent resizing */
+}

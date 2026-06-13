@@ -1,0 +1,133 @@
+body {
+    background-color: #ffffff;
+    /* Soft white gray */
+    color: #2B2D42;
+    /* Deep charcoal gray */
+}
+
+body.dark-mode {
+    background-color: #161A1D;
+    /* Deep charcoal black */
+    color: #E8E8E8;
+    /* Soft white */
+}
+
+html:not(.loaded) {
+    visibility: hidden;
+    opacity: 0;
+}
+
+html.loaded {
+    visibility: visible;
+    opacity: 1;
+    transition: none;
+}
+
+/* Default light mode styles */
+form {
+    background-color: #ffffff;
+    /* White background for light mode */
+    color: #000000;
+    /* Black text for light mode */
+    /* border: 1px solid #ccc; */
+    padding: 20px;
+    border-radius: 8px;
+}
+
+.app-card {
+    border-radius: 8px;
+}
+
+body.dark-mode .dropdown-menu {
+    background-color: #333;
+    color: white;
+}
+
+.artwork-card {
+    background-color: #ffffff !important;
+    /* Add transparency */
+    backdrop-filter: blur(1px);
+    /* Add subtle blur effect */
+    /* padding: 30px; */
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    max-width: 45rem;
+    width: 100%;
+    margin: auto;
+}
+
+body.dark-mode .app-card {
+    background: #2c2c2c;
+    border-radius: 8px;
+}
+
+form input,
+form select,
+form textarea {
+    background-color: #ffffff !important;
+    color: #000000;
+    border: 1px solid #ccc;
+    padding: 8px;
+    border-radius: 4px;
+    width: 100%;
+    /* margin-bottom: 15px; */
+}
+
+form label {
+    font-weight: 600;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Dark mode styles */
+body.dark-mode form {
+    background-color: rgba(0, 0, 0, 0);
+    /* Transparent background with dark tint */
+    color: #c7c7c7;
+    /* Light gray text for dark mode */
+}
+
+body.dark-mode form input,
+body.dark-mode form select,
+body.dark-mode form textarea {
+    background-color: #2c2c2c;
+    color: #c7c7c7;
+    /* Light gray text */
+    border: 1px solid #555555;
+    /* Darker border for inputs */
+}
+
+body.dark-mode form label {
+    color: #c7c7c7;
+    /* Lighter text for labels in dark mode */
+}
+
+body.dark-mode .btn-success {
+    background-color: #28a745;
+    color: #ffffff;
+    border-color: #555555;
+}
+
+body.dark-mode .btn-success:hover {
+    background-color: #28a745;
+    color: #ffffff;
+    border-color: #666666;
+}
+.btn-upload {
+    background: #ffffff !important;
+    /* Soft Warm Beige */
+    border: 0.5px solid black !important;
+    border-radius: 8px;
+    padding: 12px 28px;
+    font-size: 1rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 2px 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.btn-upload:hover {
+    background: #ffffff !important;
+    box-shadow: 4px 4px 12px rgba(0, 0, 0, 0.15);
+}
