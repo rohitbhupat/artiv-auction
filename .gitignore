@@ -5,8 +5,10 @@ __pycache__/
 .DS_Store
 db.sqlite3
 media/
-# static/
+static/
 staticfiles/
 .vscode/
 node_modules/
 images/
+Auction Category/
+Purchase Category/
