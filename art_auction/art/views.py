@@ -30,6 +30,14 @@ from django.views.generic import ListView
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404
 from django.db import IntegrityError
+import requests
+import jwt
+from django.contrib.auth import login
+from django.contrib.auth.models import User
+from django.shortcuts import redirect
+from django.http import HttpResponse
+
+
 
 # Import the SellerInfo model
 from art.models import SellerInfo, UserInfo
@@ -142,6 +150,84 @@ def profile_settings(request):
             "is_seller": is_seller,
         },
     )
+    
+def cognito_login(request):
+    url = (
+        f"{settings.COGNITO_DOMAIN}/oauth2/authorize"
+        f"?identity_provider=Google"
+        f"&response_type=code"
+        f"&client_id={settings.COGNITO_CLIENT_ID}"
+        f"&redirect_uri={settings.COGNITO_REDIRECT_URI}"
+        f"&scope=openid+email+profile"
+    )
+
+    print("REDIRECT URI:", settings.COGNITO_REDIRECT_URI)
+    print("AUTH URL:", url)
+
+    return redirect(url)
+
+def cognito_callback(request):
+
+    error = request.GET.get("error")
+
+    if error:
+        return HttpResponse(
+            f"OAuth Error: {error}<br>"
+            f"{request.GET.get('error_description')}",
+            status=400
+        )
+
+    code = request.GET.get("code")
+
+    if not code:
+    
+        return HttpResponse("Authorization code missing", status=400)
+    
+    token_url = f"{settings.COGNITO_DOMAIN}/oauth2/token"
+
+    response = requests.post(
+        token_url,
+        headers={
+            "Content-Type": "application/x-www-form-urlencoded"
+        },
+        data={
+            "grant_type": "authorization_code",
+            "client_id": settings.COGNITO_CLIENT_ID,
+            "client_secret": settings.COGNITO_CLIENT_SECRET,
+            "code": code,
+            "redirect_uri": settings.COGNITO_REDIRECT_URI,
+        },
+    )
+
+    token_data = response.json()
+
+    id_token = token_data.get("id_token")
+
+    if not id_token:
+        return HttpResponse(
+            f"Token exchange failed<br><br>{token_data}",
+            status=400
+        )
+    claims = jwt.decode(
+        id_token,
+        options={"verify_signature": False}
+    )
+
+    email = claims.get("email")
+
+    if not email:
+        return HttpResponse("Email not found", status=400)
+
+    user, created = User.objects.get_or_create(
+        email=email,
+        defaults={
+            "username": email.split("@")[0]
+        }
+    )
+
+    login(request, user)
+
+    return redirect("art:index")
 
 from django.utils.timezone import now
 # Catalog View

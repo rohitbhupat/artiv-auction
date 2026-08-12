@@ -1,0 +1,1074 @@
+/*
+ * ============================================================
+ *  ARTIV — Refined UI CSS
+ *  Drop this into your static/dashboard/css/ folder and add:
+ *  <link rel="stylesheet" href="{% static 'dashboard/css/artiv_refined.css' %}" type="text/css">
+ *  at the END of your {% block css_file %} in layout.html
+ *  (after all other CSS links, so it correctly overrides them)
+ * ============================================================
+ */
+
+/* ============================================================
+   1. DESIGN TOKENS — single source of truth for the whole UI
+   ============================================================ */
+:root {
+  /* Palette — warm gallery white + deep charcoal + terracotta accent */
+  --clr-bg:          #F8F5F1;      /* warm off-white canvas */
+  --clr-surface:     #FFFFFF;      /* card / modal backgrounds */
+  --clr-surface-alt: #F0EBE3;      /* subtle secondary surface */
+  --clr-border:      #E2D9CE;      /* soft dividers */
+  --clr-ink:         #1E1C1A;      /* primary text */
+  --clr-ink-muted:   #6B6560;      /* secondary / meta text */
+  --clr-accent:      #B5541F;      /* terracotta — CTAs, hover underlines */
+  --clr-accent-lt:   #D4743C;      /* lighter accent for hover states */
+  --clr-gold:        #C8972A;      /* price / bid highlight */
+
+  /* Navbar */
+  --clr-nav-bg:      #FFFFFF;
+  --clr-nav-border:  #E8E2DB;
+  --clr-nav-link:    #4A4540;
+  --clr-nav-link-hover: #1E1C1A;
+
+  /* Footer */
+  --clr-footer-bg:   #1E1C1A;
+  --clr-footer-text: #AEA89F;
+  --clr-footer-link: #D4CFC9;
+  --clr-footer-link-hover: #FFFFFF;
+
+  /* Typography */
+  --font-display:    'Calistoga', serif;
+  --font-body:       'Poppins', sans-serif;
+  --font-ui:         'Inter', sans-serif;
+
+  /* Spacing scale */
+  --space-xs:  0.25rem;
+  --space-sm:  0.5rem;
+  --space-md:  1rem;
+  --space-lg:  1.75rem;
+  --space-xl:  3rem;
+  --space-2xl: 5rem;
+
+  /* Radii */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-pill: 100px;
+
+  /* Shadows */
+  --shadow-card:   0 2px 12px rgba(30,28,26,0.07);
+  --shadow-hover:  0 8px 28px rgba(30,28,26,0.13);
+  --shadow-nav:    0 1px 0 var(--clr-nav-border);
+  --shadow-modal:  0 20px 60px rgba(30,28,26,0.18);
+
+  /* Transitions */
+  --tr-fast:   0.15s ease;
+  --tr-base:   0.25s ease;
+  --tr-slow:   0.4s ease;
+}
+
+/* Dark mode token overrides */
+body.dark-mode {
+  --clr-bg:          #141210;
+  --clr-surface:     #1E1B18;
+  --clr-surface-alt: #252118;
+  --clr-border:      #2E2A24;
+  --clr-ink:         #EDE9E3;
+  --clr-ink-muted:   #8C867D;
+  --clr-accent:      #D4743C;
+  --clr-accent-lt:   #E8956A;
+  --clr-gold:        #D4A940;
+
+  --clr-nav-bg:      #1E1B18;
+  --clr-nav-border:  #2E2A24;
+  --clr-nav-link:    #AEA89F;
+  --clr-nav-link-hover: #EDE9E3;
+
+  --clr-footer-bg:   #0E0C0A;
+  --clr-footer-text: #6B6560;
+  --clr-footer-link: #8C867D;
+
+  --shadow-card:  0 2px 12px rgba(0,0,0,0.35);
+  --shadow-hover: 0 8px 28px rgba(0,0,0,0.5);
+  --shadow-nav:   0 1px 0 var(--clr-nav-border);
+}
+
+
+/* ============================================================
+   2. BASE RESETS & BODY
+   ============================================================ */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--clr-bg) !important;
+  color: var(--clr-ink) !important;
+  font-family: var(--font-body);
+  font-size: 0.9375rem;       /* 15px */
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color var(--tr-slow), color var(--tr-slow);
+}
+
+/* Refined scrollbar */
+body::-webkit-scrollbar        { width: 6px; }
+body::-webkit-scrollbar-track  { background: transparent; }
+body::-webkit-scrollbar-thumb  { background: var(--clr-border); border-radius: 3px; }
+body::-webkit-scrollbar-thumb:hover { background: var(--clr-ink-muted); }
+
+
+/* ============================================================
+   3. TYPOGRAPHY
+   ============================================================ */
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+  color: var(--clr-ink);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+
+/* The big "Our Categories" display title */
+.our-categories-title {
+  font-family: 'Masthan', sans-serif;
+  font-size: clamp(3.5rem, 8vw, 7rem);
+  color: transparent;
+  -webkit-text-stroke: 1.5px var(--clr-border);
+  letter-spacing: -0.02em;
+  line-height: 1;
+  user-select: none;
+}
+
+body.dark-mode .our-categories-title {
+  -webkit-text-stroke-color: var(--clr-border);
+}
+
+/* Section headings with a thin rule */
+.section-title {
+  position: relative;
+  display: inline-block;
+  padding-bottom: var(--space-sm);
+  margin-bottom: var(--space-lg);
+}
+.section-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  width: 40px; height: 2px;
+  background: var(--clr-accent);
+  border-radius: 2px;
+}
+
+/* Name / label beneath category circles */
+.name-calistoga-regular {
+  font-family: var(--font-body);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--clr-ink-muted);
+}
+
+
+/* ============================================================
+   4. NAVBAR
+   ============================================================ */
+.navbar,
+body.light-mode .navbar,
+body.dark-mode .navbar {
+  background-color: var(--clr-nav-bg) !important;
+  border-bottom: 1px solid var(--clr-nav-border) !important;
+  box-shadow: none !important;
+  padding-top: 0.85rem !important;
+  padding-bottom: 0.85rem !important;
+  transition: background-color var(--tr-slow);
+}
+
+/* Sticky with backdrop blur for a polished feel */
+.navbar {
+  position: sticky;
+  top: 0;
+  z-index: 1040;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+body.light-mode .navbar { background-color: rgba(248,245,241,0.92) !important; }
+body.dark-mode  .navbar { background-color: rgba(30,27,24,0.92) !important; }
+
+/* Brand */
+.navbar .navbar-brand {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  font-weight: 400;
+  color: var(--clr-ink) !important;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: opacity var(--tr-fast);
+}
+.navbar .navbar-brand:hover { opacity: 0.72; }
+
+/* Nav links */
+.navbar .nav-link,
+body.light-mode .navbar .nav-link,
+body.dark-mode .navbar .nav-link {
+  font-family: var(--font-ui);
+  font-size: 0.82rem;
+  font-weight: 500;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  color: var(--clr-nav-link) !important;
+  text-decoration: none !important;
+  padding: 0.3rem 0 !important;
+  position: relative;
+  transition: color var(--tr-fast);
+}
+/* Animated underline on hover */
+.navbar .nav-link::after {
+  content: '';
+  position: absolute;
+  bottom: -2px; left: 0;
+  width: 0; height: 1.5px;
+  background: var(--clr-accent);
+  transition: width var(--tr-base);
+}
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after { width: 100%; }
+
+.navbar .nav-link:hover,
+body.light-mode .navbar .nav-link:hover,
+body.dark-mode  .navbar .nav-link:hover {
+  color: var(--clr-nav-link-hover) !important;
+}
+
+/* Dropdown */
+.dropdown-menu,
+body.light-mode .dropdown-menu,
+body.dark-mode .dropdown-menu {
+  background-color: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-modal) !important;
+  padding: var(--space-xs) 0 !important;
+  min-width: 160px !important;
+  transform: translateY(8px);
+}
+
+.dropdown-menu a,
+.dropdown-item,
+body.light-mode .dropdown-menu a,
+body.dark-mode  .dropdown-menu a {
+  font-family: var(--font-ui) !important;
+  font-size: 0.83rem !important;
+  font-weight: 450 !important;
+  color: var(--clr-ink-muted) !important;
+  padding: 0.6rem 1.1rem !important;
+  transition: background var(--tr-fast), color var(--tr-fast) !important;
+  border-radius: 0 !important;
+}
+
+.dropdown-menu a:hover,
+.dropdown-item:hover,
+body.light-mode .dropdown-menu a:hover,
+body.dark-mode  .dropdown-menu a:hover {
+  background-color: var(--clr-surface-alt) !important;
+  color: var(--clr-ink) !important;
+}
+
+/* Search bar */
+.search-input,
+.form-control-search {
+  background-color: var(--clr-surface-alt) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-pill) !important;
+  color: var(--clr-ink) !important;
+  font-size: 0.82rem;
+  padding: 0.45rem 1rem;
+  transition: border-color var(--tr-fast), box-shadow var(--tr-fast);
+}
+.search-input:focus,
+.form-control-search:focus {
+  border-color: var(--clr-accent) !important;
+  box-shadow: 0 0 0 3px rgba(181,84,31,0.12) !important;
+  outline: none;
+}
+.search-input::placeholder { color: var(--clr-ink-muted); }
+
+/* Autocomplete suggestions */
+.suggestions-list {
+  background: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-hover) !important;
+}
+.suggestion-item { color: var(--clr-ink); }
+.suggestion-item:hover { background: var(--clr-surface-alt) !important; }
+
+
+/* ============================================================
+   5. PAGE LOADER
+   ============================================================ */
+.loader {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: var(--clr-bg);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.3s ease;
+}
+.loader::after {
+  content: '';
+  width: 36px; height: 36px;
+  border: 2.5px solid var(--clr-border);
+  border-top-color: var(--clr-accent);
+  border-radius: 50%;
+  animation: artiv-spin 0.7s linear infinite;
+}
+@keyframes artiv-spin { to { transform: rotate(360deg); } }
+
+
+/* ============================================================
+   6. HERO CAROUSEL
+   ============================================================ */
+.carousel-inner {
+  border-radius: 0 !important;
+  overflow: hidden;
+  height: auto !important;
+  max-height: 540px;
+}
+
+.carousel-inner img.cropped-image {
+  display: block !important;
+  width: 100% !important;
+  height: 540px !important;
+  max-height: 540px;
+  object-fit: cover !important;
+  object-position: center;
+  border-radius: 0;
+  margin: 0 !important;
+  max-width: 100% !important;
+}
+
+/* Gradient overlay for legibility */
+.carousel-item::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to bottom, transparent 40%, rgba(30,28,26,0.55));
+  pointer-events: none;
+}
+
+/* Nav arrows — refined pill shape */
+.carousel-control-prev,
+.carousel-control-next {
+  width: auto !important;
+  height: auto !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  padding: 0 var(--space-md) !important;
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  width: 40px !important;
+  height: 40px !important;
+  background-color: rgba(248,245,241,0.9) !important;
+  border-radius: 50% !important;
+  background-size: 40% !important;
+  filter: invert(0.15) !important;
+  transition: background-color var(--tr-fast) !important;
+}
+.carousel-control-prev:hover .carousel-control-prev-icon,
+.carousel-control-next:hover .carousel-control-next-icon {
+  background-color: #ffffff !important;
+}
+
+/* Indicators — thin dashes */
+.carousel-indicators button,
+.carousel-indicators_home button {
+  width: 24px !important;
+  height: 2px !important;
+  border-radius: 2px !important;
+  background-color: rgba(248,245,241,0.55) !important;
+  opacity: 1 !important;
+  border: none !important;
+}
+.carousel-indicators button.active,
+.carousel-indicators_home button.active {
+  background-color: #ffffff !important;
+  width: 36px !important;
+}
+
+
+/* ============================================================
+   7. CARDS — artwork / product / catalog
+   ============================================================ */
+.app-card,
+body.light-mode .app-card,
+body.dark-mode  .app-card {
+  background-color: var(--clr-surface) !important;
+  color: var(--clr-ink) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-card) !important;
+  transition: transform var(--tr-base), box-shadow var(--tr-base), border-color var(--tr-base);
+  overflow: hidden;
+}
+
+.app-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-hover) !important;
+  border-color: transparent !important;
+}
+
+/* Card thumbnail — fixed aspect ratio */
+.app-card-thumb {
+  position: relative;
+  overflow: hidden;
+  background: var(--clr-surface-alt);
+}
+.app-card-thumb img {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  display: block;
+  transition: transform var(--tr-slow);
+}
+.app-card:hover .app-card-thumb img {
+  transform: scale(1.04);
+}
+
+/* Card body padding */
+.app-card-body,
+body.light-mode .app-card-body,
+body.dark-mode  .app-card-body {
+  background-color: var(--clr-surface) !important;
+  padding: 1rem 1.1rem 1.2rem !important;
+}
+
+/* Card title */
+.app-doc-title,
+.artwork-name {
+  font-family: var(--font-display);
+  font-size: 0.98rem !important;
+  font-weight: 400;
+  color: var(--clr-ink) !important;
+  line-height: 1.3;
+  margin-bottom: 0.2rem;
+}
+
+/* Meta text (artist, category) */
+.app-doc-meta,
+.cat-name,
+.text-details {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  color: var(--clr-ink-muted) !important;
+  letter-spacing: 0.02em;
+}
+
+/* Price / bid highlight */
+.app-doc-meta strong,
+.price-badge,
+[class*="price"],
+[class*="bid-amount"] {
+  color: var(--clr-gold) !important;
+  font-weight: 600;
+  font-size: 0.88rem;
+}
+
+/* Card hover — remove the Bootstrap scale-up, replaced with translateY above */
+body.light-mode .artwork-card_home:hover,
+body.dark-mode  .artwork-card_home:hover,
+body.light-mode .artwork-card_list:hover,
+body.dark-mode  .artwork-card_list:hover,
+body.light-mode .product-card:hover,
+body.dark-mode  .product-card:hover {
+  transform: translateY(-4px) !important;
+  box-shadow: var(--shadow-hover) !important;
+}
+
+/* Heart / favourite icon */
+.heart-icon {
+  color: var(--clr-border);
+  transition: color var(--tr-fast), transform var(--tr-fast);
+}
+.heart-icon:hover { color: var(--clr-accent); transform: scale(1.15); }
+.heart-icon.active { color: #E03E3E !important; }
+
+
+/* ============================================================
+   8. BUTTONS
+   ============================================================ */
+
+/* Primary CTA — filled terracotta */
+.btn-warning,
+.btn-warning_bid,
+.btn-warning_buy,
+.btn-warning_signup {
+  background-color: var(--clr-accent) !important;
+  border-color: var(--clr-accent) !important;
+  color: #FFFFFF !important;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm) !important;
+  padding: 0.5rem 1.25rem !important;
+  transition: background-color var(--tr-fast), box-shadow var(--tr-fast), transform var(--tr-fast);
+  box-shadow: none !important;
+}
+.btn-warning:hover,
+.btn-warning_bid:hover,
+.btn-warning_buy:hover,
+.btn-warning_signup:hover {
+  background-color: var(--clr-accent-lt) !important;
+  border-color: var(--clr-accent-lt) !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(181,84,31,0.28) !important;
+}
+.btn-warning:active,
+.btn-warning_bid:active,
+.btn-warning_buy:active {
+  transform: translateY(0);
+}
+
+/* Ghost / outline variant */
+.btn-outline-secondary,
+.btn-home_ar,
+.btn-home_details {
+  background: transparent !important;
+  border: 1.5px solid var(--clr-border) !important;
+  color: var(--clr-ink) !important;
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm) !important;
+  padding: 0.5rem 1.25rem !important;
+  transition: border-color var(--tr-fast), background var(--tr-fast), color var(--tr-fast);
+}
+.btn-outline-secondary:hover,
+.btn-home_ar:hover,
+.btn-home_details:hover {
+  border-color: var(--clr-ink) !important;
+  background: var(--clr-surface-alt) !important;
+  color: var(--clr-ink) !important;
+}
+
+/* Auth nav buttons */
+.btn-success_login,
+.btn-primary_register {
+  font-family: var(--font-ui) !important;
+  font-size: 0.82rem !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.06em !important;
+  color: var(--clr-nav-link) !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+}
+.btn-success_login:hover,
+.btn-primary_register:hover {
+  color: var(--clr-accent) !important;
+  text-decoration: none !important;
+  transform: none !important;
+}
+
+/* Primary blue — keep but refine */
+.btn-primary {
+  background-color: #2563EB !important;
+  border-color: #2563EB !important;
+  color: #fff !important;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm) !important;
+  transition: background-color var(--tr-fast);
+}
+.btn-primary:hover {
+  background-color: #1D4ED8 !important;
+  border-color: #1D4ED8 !important;
+}
+
+/* Button — register / submit */
+.btn-register {
+  min-width: 160px;
+}
+
+
+/* ============================================================
+   9. CATEGORIES SECTION
+   ============================================================ */
+.heading {
+  margin-top: 2rem !important;
+  margin-bottom: 2.5rem !important;
+}
+
+/* Category circle images — refine sizing and add hover ring */
+.our-categories img.rounded-circle,
+img.rounded-circle[width="175"] {
+  width: 140px !important;
+  height: 140px !important;
+  object-fit: cover;
+  border: 3px solid var(--clr-border);
+  transition: border-color var(--tr-base), transform var(--tr-base), box-shadow var(--tr-base);
+  display: block;
+  margin: 0 auto;
+}
+.our-categories img.rounded-circle:hover,
+img.rounded-circle[width="175"]:hover {
+  border-color: var(--clr-accent);
+  transform: scale(1.05);
+  box-shadow: 0 6px 20px rgba(181,84,31,0.2);
+}
+
+/* Category link label */
+.category-link {
+  font-family: var(--font-ui);
+  font-size: 0.72rem !important;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--clr-ink-muted) !important;
+  text-decoration: none !important;
+  transition: color var(--tr-fast);
+  margin-top: 0.65rem !important;
+}
+.category-link .arrow,
+.category-link .fas.fa-arrow-right {
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity var(--tr-fast), transform var(--tr-fast);
+}
+.category-link:hover {
+  color: var(--clr-accent) !important;
+}
+.category-link:hover .arrow,
+.category-link:hover .fas.fa-arrow-right {
+  opacity: 1;
+  transform: translateX(4px);
+}
+
+
+/* ============================================================
+   10. FORMS
+   ============================================================ */
+.form-control,
+body.light-mode .form-control,
+body.dark-mode  .form-control {
+  background-color: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-sm) !important;
+  color: var(--clr-ink) !important;
+  font-size: 0.875rem;
+  padding: 0.55rem 0.875rem;
+  transition: border-color var(--tr-fast), box-shadow var(--tr-fast);
+}
+.form-control:focus {
+  border-color: var(--clr-accent) !important;
+  box-shadow: 0 0 0 3px rgba(181,84,31,0.12) !important;
+  outline: none;
+}
+.form-control::placeholder { color: var(--clr-ink-muted); opacity: 0.8; }
+
+.form-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--clr-ink-muted) !important;
+  margin-bottom: 0.35rem;
+}
+
+
+/* ============================================================
+   11. SIGNUP / SIGNIN CARDS
+   ============================================================ */
+.app-auth-wrapper .card,
+.signup-card,
+.signin-card {
+  background-color: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-hover) !important;
+  padding: var(--space-xl) var(--space-lg);
+}
+
+/* Remove the transparent card background override in signup.css */
+.signup-page .card,
+.signin-page .card {
+  background-color: var(--clr-surface) !important;
+}
+
+.auth-heading,
+.card-title {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 400;
+  color: var(--clr-ink) !important;
+  text-align: center;
+  margin-bottom: var(--space-sm);
+}
+.auth-heading-desc {
+  font-size: 0.83rem;
+  color: var(--clr-ink-muted);
+  text-align: center;
+}
+
+
+/* ============================================================
+   12. ARTWORK DETAIL PAGE
+   ============================================================ */
+.card,
+body.light-mode .card,
+body.dark-mode  .card {
+  background-color: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-lg) !important;
+  color: var(--clr-ink) !important;
+}
+
+/* Bid input */
+#bid-amount,
+input[type="number"] {
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+#bid-amount::-webkit-outer-spin-button,
+#bid-amount::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+}
+
+
+/* ============================================================
+   13. ALERT / TOAST MESSAGES
+   ============================================================ */
+.alert {
+  border-radius: var(--radius-md) !important;
+  border: none !important;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+body.light-mode .alert-success  { background-color: #D1FAE5 !important; color: #065F46 !important; }
+body.light-mode .alert-danger   { background-color: #FEE2E2 !important; color: #991B1B !important; }
+body.light-mode .alert-warning  { background-color: #FEF3C7 !important; color: #92400E !important; }
+body.dark-mode  .alert-success  { background-color: #064E3B !important; color: #A7F3D0 !important; }
+body.dark-mode  .alert-danger   { background-color: #7F1D1D !important; color: #FCA5A5 !important; }
+body.dark-mode  .alert-warning  { background-color: #78350F !important; color: #FDE68A !important; }
+
+/* Alert box (catalog) */
+.alert-box {
+  border-radius: var(--radius-md) !important;
+  font-size: 0.875rem !important;
+  font-weight: 500 !important;
+  background-color: var(--clr-accent) !important;
+}
+.alert-box.error { background-color: #DC2626 !important; }
+
+
+/* ============================================================
+   14. MODALS
+   ============================================================ */
+.modal-content,
+body.light-mode .modal-content,
+body.dark-mode  .modal-content {
+  background-color: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-lg) !important;
+  box-shadow: var(--shadow-modal) !important;
+  color: var(--clr-ink) !important;
+  left: 0 !important;           /* fix the rogue left:6rem */
+}
+.modal-header {
+  border-bottom: 1px solid var(--clr-border) !important;
+  padding: 1.25rem 1.5rem;
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  color: var(--clr-ink) !important;
+}
+.modal-body { padding: 1.5rem; }
+.modal-footer {
+  border-top: 1px solid var(--clr-border) !important;
+  padding: 1rem 1.5rem;
+}
+.btn-close {
+  background-color: transparent !important;
+  opacity: 0.5;
+  filter: var(--bs-btn-close-filter, none);
+}
+body.dark-mode .btn-close {
+  filter: invert(1);
+}
+
+
+/* ============================================================
+   15. NOTIFICATION SIDEBAR
+   ============================================================ */
+#notification-sidebar {
+  background-color: var(--clr-surface) !important;
+  border-left: 1px solid var(--clr-border);
+  box-shadow: -4px 0 20px rgba(30,28,26,0.12);
+  width: 320px;
+}
+#notification-sidebar .header {
+  background-color: var(--clr-surface) !important;
+  border-bottom: 1px solid var(--clr-border) !important;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.03em;
+  padding: 1rem 1.25rem;
+}
+.notification-item {
+  background-color: var(--clr-surface) !important;
+  border-bottom: 1px solid var(--clr-border) !important;
+  transition: background-color var(--tr-fast);
+  cursor: pointer;
+}
+.notification-item:hover {
+  background-color: var(--clr-surface-alt) !important;
+}
+#clear-all-btn {
+  background-color: var(--clr-accent) !important;
+  border: none !important;
+  border-radius: var(--radius-sm) !important;
+  font-size: 0.78rem !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.05em !important;
+  text-transform: uppercase !important;
+}
+
+
+/* ============================================================
+   16. FOOTER
+   ============================================================ */
+footer {
+  background-color: var(--clr-footer-bg) !important;
+  margin-top: var(--space-2xl);
+}
+
+.footer-container {
+  background-color: var(--clr-footer-bg) !important;
+  padding: var(--space-xl) var(--space-md) var(--space-lg);
+  color: var(--clr-footer-text);
+}
+
+.footer-content {
+  max-width: 780px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Subtle top rule */
+.footer-container::before {
+  content: '';
+  display: block;
+  width: 48px;
+  height: 1.5px;
+  background: var(--clr-accent);
+  margin: 0 auto var(--space-lg);
+  border-radius: 2px;
+}
+
+.footer-links {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-md);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.2rem 0;
+}
+.footer-links li {
+  display: inline;
+  margin: 0 !important;
+}
+.footer-links li::after {
+  content: '·';
+  color: var(--clr-footer-text);
+  margin: 0 0.6rem;
+  opacity: 0.4;
+}
+.footer-links li:last-child::after { display: none; }
+
+.footer-links a,
+body.light-mode .footer-links a,
+body.dark-mode  .footer-links a {
+  font-family: var(--font-ui);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--clr-footer-link) !important;
+  text-decoration: none;
+  transition: color var(--tr-fast);
+}
+.footer-links a:hover,
+body.light-mode .footer-links a:hover,
+body.dark-mode  .footer-links a:hover {
+  color: var(--clr-footer-link-hover) !important;
+}
+
+.footer-container p {
+  font-size: 0.75rem;
+  color: var(--clr-footer-text);
+  margin-bottom: 0.3rem;
+}
+.footer-container .footer-links strong a {
+  color: var(--clr-footer-link) !important;
+  font-weight: 600;
+}
+.footer-container .footer-links strong a:hover {
+  color: #fff !important;
+}
+
+
+/* ============================================================
+   17. BOLD DIVIDER
+   ============================================================ */
+.bold-line {
+  border-bottom: 1px solid var(--clr-border) !important;
+  opacity: 1;
+}
+
+
+/* ============================================================
+   18. BACK-TO-TOP BUTTON
+   ============================================================ */
+#back-to-top-btn {
+  background-color: var(--clr-accent) !important;
+  color: #fff !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 44px !important;
+  height: 44px !important;
+  box-shadow: 0 4px 14px rgba(181,84,31,0.35) !important;
+  transition: background-color var(--tr-fast), transform var(--tr-fast) !important;
+}
+#back-to-top-btn:hover {
+  background-color: var(--clr-accent-lt) !important;
+  transform: translateY(-2px);
+}
+
+
+/* ============================================================
+   19. FILTER / SORT DROPDOWN
+   ============================================================ */
+.filter-dropdown .dropdown-toggle {
+  font-family: var(--font-ui);
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--clr-ink) !important;
+  border: 1px solid var(--clr-border);
+  border-radius: var(--radius-sm);
+  padding: 0.4rem 0.9rem;
+  background: transparent;
+  transition: border-color var(--tr-fast);
+}
+.filter-dropdown .dropdown-toggle:hover {
+  border-color: var(--clr-ink);
+}
+
+
+/* ============================================================
+   20. DARK-MODE: extra surface refinements
+   ============================================================ */
+body.dark-mode .app-header,
+body.dark-mode .app-sidepanel .sidepanel-inner,
+body.dark-mode .app-sidepanel-footer {
+  background-color: var(--clr-surface) !important;
+}
+
+body.dark-mode .btn {
+  /* Don't nuke button colors in dark mode */
+  background-color: unset;
+  color: unset;
+}
+
+body.dark-mode .form-control {
+  background-color: var(--clr-surface-alt) !important;
+}
+
+
+/* ============================================================
+   21. RESPONSIVE TWEAKS
+   ============================================================ */
+@media (max-width: 767px) {
+  .carousel-inner img.cropped-image {
+    height: 260px !important;
+  }
+
+  .search-container {
+    width: 100% !important;
+    margin: 0 !important;
+  }
+
+  .our-categories-title {
+    font-size: 2.8rem;
+  }
+
+  img.rounded-circle[width="175"] {
+    width: 110px !important;
+    height: 110px !important;
+  }
+
+  .footer-container::before { display: none; }
+
+  .footer-links { gap: 0; }
+
+  .modal-content { left: 0 !important; }
+
+  .modal-dialog { max-width: 94% !important; }
+}
+
+@media (max-width: 480px) {
+  .carousel-inner img.cropped-image {
+    height: 200px !important;
+  }
+
+  img.rounded-circle[width="175"] {
+    width: 90px !important;
+    height: 90px !important;
+  }
+
+  .our-categories-title {
+    font-size: 2rem;
+  }
+}
+
+/* ============================================================
+   22. UTILITY OVERRIDES — suppress Bootstrap defaults
+       that conflict with the above
+   ============================================================ */
+
+/* Remove Bootstrap's .row gutter bleed that cuts into padding */
+.row { --bs-gutter-y: 1.5rem !important; }
+
+/* Fix suggestions-list position when inside .search-wrapper */
+.suggestions-list {
+  left: 0 !important;
+  width: 100% !important;
+  max-width: 420px;
+}
+
+/* Ensure dropdown-menu-mode uses new tokens */
+.dropdown-menu-mode {
+  background-color: var(--clr-surface) !important;
+  border: 1px solid var(--clr-border) !important;
+  border-radius: var(--radius-md) !important;
+  box-shadow: var(--shadow-hover) !important;
+}
+.dropdown-menu-mode .dropdown-item {
+  color: var(--clr-ink-muted) !important;
+}
+.dropdown-menu-mode .dropdown-item:hover {
+  background-color: var(--clr-surface-alt) !important;
+  color: var(--clr-ink) !important;
+}

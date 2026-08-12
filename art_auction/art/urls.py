@@ -39,6 +39,8 @@ urlpatterns = [
    path('favorites/', views.favorites_page, name='favorites_page'),
    path('get_favorites/', views.get_favorites, name='get_favorites'),
    path('remove-favorite/<int:artwork_id>/', views.remove_favorite, name='remove_favorite'),
+   path("auth/google/", views.cognito_login, name="google_login"),
+   path("auth/callback/", views.cognito_callback, name="cognito_callback"),
 ]
 if settings.DEBUG:
    urlpatterns += static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)

@@ -26,9 +26,10 @@ load_dotenv(BASE_DIR / '.env')
 SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
-ALLOWED_HOSTS = ['artiv.co.in', 'www.artiv.co.in', '3.7.228.96']
+# ALLOWED_HOSTS = ['artiv.co.in', 'www.artiv.co.in', '3.7.228.96']
+ALLOWED_HOSTS=["*"]
 
 
 # Application definition
@@ -88,16 +89,22 @@ CORS_ALLOWED_ORIGINS = [
 # HTTPS SECURITY
 # =========================
 
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = False
 
 SESSION_COOKIE_SECURE = True
 
 CSRF_COOKIE_SECURE = True
 
+
 SECURE_PROXY_SSL_HEADER = (
     'HTTP_X_FORWARDED_PROTO',
     'https'
 )
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://artiv.co.in",
+    "https://www.artiv.co.in",
+]
 ROOT_URLCONF = 'art_auction.urls'
 
 TEMPLATES = [
@@ -129,12 +136,12 @@ DATABASES = {
         'PASSWORD': os.getenv('DB_PASSWORD'),
         'HOST': 'localhost',
         'PORT': '5432', # default PostgreSQL port
-    }
+    },
     
-    # 'default': {
-    #     'ENGINE': 'django.db.backends.sqlite3',
-    #     'NAME': BASE_DIR / 'db.sqlite3',
-    # }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
 }
 
 
@@ -291,3 +298,10 @@ LOGGING = {
 
 LOGIN_REDIRECT_URL = "/"
 LOGOUT_REDIRECT_URL = "/"
+
+COGNITO_DOMAIN = os.getenv("COGNITO_DOMAIN")
+COGNITO_CLIENT_ID = os.getenv("COGNITO_CLIENT_ID")
+COGNITO_REGION = os.getenv("COGNITO_REGION")
+COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
+
+COGNITO_REDIRECT_URI = os.getenv("COGNITO_REDIRECT_URI")
