@@ -55,7 +55,12 @@ class Artwork(models.Model):
     foot = models.FloatField(default=0, blank=True, null=True)
     inches = models.FloatField(default=0, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
-    end_date = models.DateField(null=True, blank=True, db_index=True)
+    end_date = models.DateTimeField(
+        null=True,
+        blank=True,
+        db_index=True
+    )
+    ending_reminder_sent = models.BooleanField(default=False)
     favorited_by = models.ManyToManyField(User, related_name="favorite_artworks", blank=True)
     user = models.ForeignKey(
         settings.AUTH_USER_MODEL, on_delete=models.CASCADE, null=True, blank=True
@@ -81,17 +86,6 @@ class Artwork(models.Model):
     discounted_price = models.DecimalField(
         max_digits=10, decimal_places=2, null=True, blank=True
     )
-    def save(self, *args, **kwargs):
-        """ Automatically assign categories based on sale_type and generate a product_id. """
-        if not self.product_id:  # Only generate product_id if it doesn't already exist
-            self.product_id = str(uuid.uuid4())  # Generate a unique product_id using UUID
-
-        if self.sale_type == 'discount':
-            self.product_cat = None  # Ensure product_cat is empty
-        elif self.sale_type == 'auction':
-            self.purchase_category = None  # Ensure purchase_category is empty
-        
-        super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse('art:catalog_products', kwargs={'pk': self.product_cat.id})
@@ -101,62 +95,120 @@ class Artwork(models.Model):
         return self.product_price * 0.8
 
     def clean(self):
-        """Validation for discount and auction artworks."""
         super().clean()
-
+    
         if self.sale_type == "discount":
+        
             self.opening_bid = None
             self.end_date = None
+            self.product_cat = None
+    
             if self.discounted_price is None:
                 self.discounted_price = self.get_discounted_price()
+    
             elif self.discounted_price >= self.product_price:
-                raise ValidationError(
-                    {
-                        "discounted_price": "Discounted price must be less than the product price."
-                    }
-                )
-
+                raise ValidationError({
+                    "discounted_price":
+                        "Discounted price must be less than the product price."
+                })
+    
         elif self.sale_type == "auction":
+        
             if not self.product_cat:
-                raise ValidationError(
-                    {"product_cat": "Product category is required for bidding."}
-                )
+                raise ValidationError({
+                    "product_cat":
+                        "Product category is required for bidding."
+                })
+    
             if not self.opening_bid:
-                raise ValidationError(
-                    {"opening_bid": "Opening bid is required for bidding."}
-                )
+                raise ValidationError({
+                    "opening_bid":
+                        "Opening bid is required for bidding."
+                })
+    
             if not self.end_date:
-                raise ValidationError({"end_date": "End date is required for bidding."})
+                raise ValidationError({
+                    "end_date":
+                        "Auction end date and time are required."
+                })
+    
+            if self.end_date <= timezone.now():
+                raise ValidationError({
+                    "end_date":
+                        "Auction end date and time must be in the future."
+                })
 
     def save(self, *args, **kwargs):
-        """Ensure correct fields are set before saving, and check for duplicate images."""
-        self.full_clean()  # Explicitly validate before saving
-        
+        """Ensure correct fields are set before saving."""
+
+        # Generate product ID if it doesn't exist
+        if not self.product_id:
+            self.product_id = str(uuid.uuid4())
+
+        # Validate model before saving
+        self.full_clean()
+
+        # -----------------------------
+        # DISCOUNT ARTWORK
+        # -----------------------------
         if self.sale_type == "discount":
+
             self.opening_bid = None
             self.end_date = None
-            self.product_cat = None  # Ensure product_cat is empty
-    
+            self.product_cat = None
+
+            # No auction reminder needed
+            self.ending_reminder_sent = False
+
+            # Calculate discounted price if not already set
             if self.discounted_price is None:
                 self.discounted_price = self.get_discounted_price()
-    
+
+        # -----------------------------
+        # AUCTION ARTWORK
+        # -----------------------------
         elif self.sale_type == "auction":
-            self.purchase_category = None  # Ensure purchase_category is empty
+
+            # Auction doesn't use purchase category
+            self.purchase_category = None
+
+            # Opening bid and end time are mandatory
             if not self.opening_bid or not self.end_date:
-                raise ValidationError("Opening bid and End date are required for auction.")
-    
+                raise ValidationError(
+                    "Opening bid and End date are required for auction."
+                )
+
+        # -----------------------------
+        # DUPLICATE IMAGE CHECK
+        # -----------------------------
         if self.product_image:
-            uploaded_image_hash = imagehash.phash(Image.open(self.product_image))
-            existing_images = Artwork.objects.exclude(id=self.id)
-    
+
+            uploaded_image_hash = imagehash.phash(
+                Image.open(self.product_image)
+            )
+
+            existing_images = Artwork.objects.exclude(
+                id=self.id
+            )
+
             for artwork in existing_images:
-                stored_image_hash = imagehash.phash(Image.open(artwork.product_image.path))
+
+                if not artwork.product_image:
+                    continue
+
+                stored_image_hash = imagehash.phash(
+                    Image.open(artwork.product_image.path)
+                )
+
                 if uploaded_image_hash == stored_image_hash:
-                    raise ValidationError("Duplicate image detected. This artwork is already uploaded.")
-    
-        if self.end_date:
-            self.end_date = timezone.make_aware(datetime.combine(self.end_date, time.min))
-    
+                    raise ValidationError(
+                        "Duplicate image detected. "
+                        "This artwork is already uploaded."
+                    )
+
+        # -----------------------------
+        # SAVE
+        # -----------------------------
         super().save(*args, **kwargs)
 
 
@@ -190,7 +242,10 @@ class OrderModel(models.Model):
 class Bid(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     product = models.ForeignKey(Artwork, on_delete=models.CASCADE, related_name="bids")
-    bid_date = models.DateField(auto_now_add=True)
+    bid_date = models.DateTimeField(
+        auto_now_add=True,
+        db_index=True
+    )
     bid_amt = models.IntegerField(default=1)
 
     def __str__(self):
@@ -328,13 +383,13 @@ class Refund(models.Model):
     ])
     created_at = models.DateTimeField(auto_now_add=True)
 
-    def save(self, *args, **kwargs):
-        """Automatically calculate refunded amount based on order status."""
-        if not self.refunded_amount:  # Calculate only if not manually set
-            order_status = self.order.shipping.status  # Get order shipping status
-            refund_percentage = self.REFUND_PERCENTAGE.get(order_status, 0.0)
-            self.refunded_amount = self.order.total_amount * refund_percentage  # Apply percentage refund
-        super().save(*args, **kwargs)
+    # def save(self, *args, **kwargs):
+    #     """Automatically calculate refunded amount based on order status."""
+    #     if not self.refunded_amount:  # Calculate only if not manually set
+    #         order_status = self.order.shipping.status  # Get order shipping status
+    #         refund_percentage = self.REFUND_PERCENTAGE.get(order_status, 0.0)
+    #         self.refunded_amount = self.order.total_amount * refund_percentage  # Apply percentage refund
+    #     super().save(*args, **kwargs)
 
     def refund_message(self):
         """Return a message for the admin text box."""

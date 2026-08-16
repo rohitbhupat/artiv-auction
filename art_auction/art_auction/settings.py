@@ -305,3 +305,13 @@ COGNITO_REGION = os.getenv("COGNITO_REGION")
 COGNITO_CLIENT_SECRET = os.getenv("COGNITO_CLIENT_SECRET")
 
 COGNITO_REDIRECT_URI = os.getenv("COGNITO_REDIRECT_URI")
+
+AWS_SES_REGION = os.getenv(
+    "AWS_SES_REGION",
+    "ap-south-1"
+)
+
+AWS_SES_FROM_EMAIL = os.getenv(
+    "AWS_SES_FROM_EMAIL",
+    "noreply@artiv.co.in"
+)

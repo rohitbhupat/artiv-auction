@@ -51,7 +51,16 @@
                                         {{ product.product_cat.cat_name|slice:":2" }} - {{ product.id }}
                                     </span>
                                 </li>                                
-                                <li><span class="text-muted">Ends on:</span> <span class="text-details">{{ product.end_date }}</span></li>
+                                <li>
+                                    {% if product.end_date > current_time %}
+                                        <span class="text-muted">Ends on:</span>
+                                    {% else %}
+                                        <span class="text-muted">Ended on:</span>
+                                    {% endif %}
+                                    <span class="text-details">
+                                        {{ product.end_date|date:"M. d, Y, g:i a" }}
+                                    </span>
+                                </li>
                             </ul>
                             <div class="btn-group d-flex mx-auto mb-2 mt-2 button-group" role="group" aria-label="Basic outlined example">
                                 <a href="{% url 'art:product_details' pk=product.pk %}" class="btn btn-warning_buy btn-sm">Details</a>

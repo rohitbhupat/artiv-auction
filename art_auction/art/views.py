@@ -21,7 +21,7 @@ from django.views.generic.edit import CreateView, UpdateView, DeleteView
 import razorpay
 from django.http import JsonResponse
 import re
-from dashboard.models import Favorite, Payment, Artwork, OrderModel, Bid, Catalogue, PurchaseCategory
+from dashboard.models import Favorite, Payment, Artwork, OrderModel, Bid, Catalogue, PurchaseCategory, Shipping
 from django.views.decorators.csrf import csrf_exempt
 import json
 from dashboard.constants import PaymentStatus
@@ -151,7 +151,18 @@ def profile_settings(request):
         },
     )
     
+import secrets
+
 def cognito_login(request):
+    is_seller = request.GET.get("seller") == "1"
+
+    # Generate a random OAuth state
+    state = secrets.token_urlsafe(32)
+
+    # Store state and login type in the Django session
+    request.session["oauth_state"] = state
+    request.session["google_login_type"] = "seller" if is_seller else "user"
+
     url = (
         f"{settings.COGNITO_DOMAIN}/oauth2/authorize"
         f"?identity_provider=Google"
@@ -159,10 +170,12 @@ def cognito_login(request):
         f"&client_id={settings.COGNITO_CLIENT_ID}"
         f"&redirect_uri={settings.COGNITO_REDIRECT_URI}"
         f"&scope=openid+email+profile"
+        f"&state={state}"
     )
 
     print("REDIRECT URI:", settings.COGNITO_REDIRECT_URI)
     print("AUTH URL:", url)
+    print("LOGIN TYPE:", "seller" if is_seller else "user")
 
     return redirect(url)
 
@@ -177,12 +190,31 @@ def cognito_callback(request):
             status=400
         )
 
+    # Validate OAuth state
+    received_state = request.GET.get("state")
+    saved_state = request.session.get("oauth_state")
+
+    if not received_state or received_state != saved_state:
+        return HttpResponse(
+            "Invalid OAuth state. Please try again.",
+            status=400
+        )
+
+    # Get login type before clearing session data
+    login_type = request.session.get("google_login_type", "user")
+
+    # Clear OAuth session data
+    request.session.pop("oauth_state", None)
+    request.session.pop("google_login_type", None)
+
     code = request.GET.get("code")
 
     if not code:
-    
-        return HttpResponse("Authorization code missing", status=400)
-    
+        return HttpResponse(
+            "Authorization code missing",
+            status=400
+        )
+
     token_url = f"{settings.COGNITO_DOMAIN}/oauth2/token"
 
     response = requests.post(
@@ -208,6 +240,7 @@ def cognito_callback(request):
             f"Token exchange failed<br><br>{token_data}",
             status=400
         )
+
     claims = jwt.decode(
         id_token,
         options={"verify_signature": False}
@@ -216,8 +249,12 @@ def cognito_callback(request):
     email = claims.get("email")
 
     if not email:
-        return HttpResponse("Email not found", status=400)
+        return HttpResponse(
+            "Email not found",
+            status=400
+        )
 
+    # Create or get Django User
     user, created = User.objects.get_or_create(
         email=email,
         defaults={
@@ -225,6 +262,14 @@ def cognito_callback(request):
         }
     )
 
+    # If this Google login came from "Create Seller Account"
+    if login_type == "seller":
+
+        make_user_seller(user)
+
+        print(f"Seller account created/confirmed for: {email}")
+
+    # Login user
     login(request, user)
 
     return redirect("art:index")
@@ -241,7 +286,8 @@ class CatListView(View):
             product_qty__gt=0,
             status="active",
             is_sold=False,
-            is_purchased=False
+            is_purchased=False,
+            end_date__gt=timezone.now(),
         )
         # print("Filtered Products:", products)
 
@@ -266,6 +312,7 @@ class CatListView(View):
                 "catalog": catalog,
                 "product_object_list": products,
                 "catalogue_list": Catalogue.objects.all(),
+                "current_time": timezone.now(),
             },
         )
 
@@ -330,13 +377,22 @@ def register_user(request):
 
 
 class RegisterSeller(View):
+
     def get(self, request):
         if request.user.is_authenticated:
-            return redirect("art:index")  # Prevent already logged-in users from registering
+            return redirect("art:index")
 
         userform = UserRegistrationForm()
         sellerForm = SellerInfoForm()
-        return render(request, "art/registerseller.html", {"userform": userform, "sellerForm": sellerForm})
+
+        return render(
+            request,
+            "art/registerseller.html",
+            {
+                "userform": userform,
+                "sellerForm": sellerForm
+            }
+        )
 
     def post(self, request):
         if request.user.is_authenticated:
@@ -346,56 +402,115 @@ class RegisterSeller(View):
         sellerForm = SellerInfoForm(request.POST)
 
         if userform.is_valid() and sellerForm.is_valid():
+
             user = userform.save()
+
+            # Create seller information
             seller_info = sellerForm.save(commit=False)
-            seller_info.user = user  # Assign the newly created user
+            seller_info.user = user
             seller_info.save()
 
-            sellerGroup, _ = Group.objects.get_or_create(name="SellerGroup")
-            user.groups.add(sellerGroup)
+            # Make user a seller
+            make_user_seller(user)
 
-            login(request, user)  # Auto-login after registration
-            messages.success(request, "Seller registration successful.")
-            return redirect("art:index")  # Redirect to prevent resubmission
+            # Login
+            login(request, user)
 
-        messages.error(request, "Please correct the errors below.")
-        return render(request, "art/registerseller.html", {"userform": userform, "sellerForm": sellerForm})
+            messages.success(
+                request,
+                "Seller registration successful."
+            )
 
+            return redirect("art:index")
+
+        messages.error(
+            request,
+            "Please correct the errors below."
+        )
+
+        return render(
+            request,
+            "art/registerseller.html",
+            {
+                "userform": userform,
+                "sellerForm": sellerForm
+            }
+        )
 
 def user_login(request):
+
     if request.user.is_authenticated:
-        return redirect("art:index")  # Prevent already logged-in users from logging in again
+        return redirect("art:index")
 
     if request.method == "POST":
+
         form = LoginForm(request, request.POST)
+
         if form.is_valid():
+
             uname = form.cleaned_data["username"]
             upass = form.cleaned_data["password"]
-            user = authenticate(request, username=uname, password=upass)
+
+            user = authenticate(
+                request,
+                username=uname,
+                password=upass
+            )
+
             if user is not None:
+
                 login(request, user)
-                messages.success(request, "Login successful.")
 
-                # Check if the user is part of the SellerGroup
+                messages.success(
+                    request,
+                    "Login successful."
+                )
+
+                # Seller
                 if user.groups.filter(name="SellerGroup").exists():
-                    SellerInfo.objects.get_or_create(user=user)  # Ensure seller info exists
 
-                    # Fetch related data for the seller
-                    total_order = OrderModel.objects.filter(product__user=user).count()
-                    total_product = Artwork.objects.filter(user=user).count()
+                    SellerInfo.objects.get_or_create(user=user)
 
-                    return redirect("art:index")  # Redirect instead of rendering directly
+                    return redirect("art:index")
 
-                return redirect("art:index")  # Redirect to prevent resubmission
+                # Normal user
+                return redirect("art:index")
 
-            messages.error(request, "Invalid username or password.")
+            messages.error(
+                request,
+                "Invalid username or password."
+            )
+
         else:
-            messages.error(request, "Please correct the errors below.")
+            messages.error(
+                request,
+                "Please correct the errors below.")
 
     else:
         form = LoginForm()
 
-    return render(request, "art/signin.html", {"login_form": form})
+    return render(
+        request,
+        "art/signin.html",
+        {
+            "login_form": form
+        }
+    )
+    
+def make_user_seller(user):
+    """
+    Ensure that the given user is registered as a seller.
+    Creates SellerInfo and adds the user to SellerGroup.
+    """
+
+    # Create SellerInfo if it doesn't already exist
+    SellerInfo.objects.get_or_create(user=user)
+
+    # Add user to SellerGroup
+    seller_group, _ = Group.objects.get_or_create(name="SellerGroup")
+    user.groups.add(seller_group)
+
+    return user
 
 class Profile(LoginRequiredMixin, TemplateView):
     template_name = "social-media/profile.html"
@@ -562,11 +677,15 @@ class UnsoldArtworkDetailView(LoginRequiredMixin, DetailView):
 class OrderCreateView(LoginRequiredMixin, View):
     def get(self, request, *args, **kwargs):
         product_object = get_object_or_404(Artwork, pk=self.kwargs.get("pk"))
-        last_bid = Bid.objects.filter(product=self.kwargs.get("pk")).last()
+        last_bid = Bid.objects.filter(
+            product=self.kwargs.get("pk")
+        ).order_by("-bid_amt").first()
+
+        price = last_bid.bid_amt if last_bid else product_object.opening_bid
         return render(
             request=request,
             template_name="art/order_form.html",
-            context={"product": product_object, "last_bid": last_bid},
+            context={"product": product_object, "last_bid": last_bid, "price":price},
         )
 
     def post(self, request, *args, **kwargs):
@@ -606,6 +725,7 @@ class OrderCreateView(LoginRequiredMixin, View):
                 "callback_url": request.build_absolute_uri("/callback/"),
                 "razorpay_key": settings.RAZORPAY_KEY_ID,
                 "order": order,
+                "razorpay_order_id": razorpay_order["id"],
                 "amount_in_paise": int(product_price) * int(product_qty) * 100,
             },
         )
@@ -692,6 +812,9 @@ def callback(request):
             payment_id = request.POST.get("razorpay_payment_id", "")
             provider_order_id = request.POST.get("razorpay_order_id", "")
             signature_id = request.POST.get("razorpay_signature", "")
+            print("========== CALLBACK RECEIVED ==========")
+            print("POST DATA:", request.POST)
+            print("Provider Order ID:", provider_order_id)
             order_payment = Payment.objects.get(provider_order_id=provider_order_id)
 
             order_payment.payment_id = payment_id
@@ -700,17 +823,34 @@ def callback(request):
             order_payment.save()
 
             if verify_signature(request.POST):
+                print("========== PAYMENT VERIFIED ==========")
+                print("Provider Order ID:", provider_order_id)
+                print("Payment ID:", payment_id)
+            
                 order_payment.status = PaymentStatus.SUCCESS
                 show_feedback_modal = True
-
+            
+                Shipping.objects.get_or_create(
+                    order=order_payment.order,
+                    defaults={"status": "processing"},
+                )
+            
                 product = order_payment.order.product
-                product.product_qty -= int(order_payment.order.order_qty)
-                if product.product_qty <= 0:
-                    product.is_sold = True
-                product.save()
+            
+                new_quantity = (
+                    product.product_qty
+                    - int(order_payment.order.order_qty)
+                )
+            
+                Artwork.objects.filter(pk=product.pk).update(
+                    product_qty=max(new_quantity, 0),
+                    is_sold=new_quantity <= 0,
+                    is_purchased=True,
+                )
+            
             else:
                 order_payment.status = PaymentStatus.FAILURE
-
+            
             order_payment.save()
 
             return render(
@@ -801,21 +941,35 @@ class UnsoldListView(LoginRequiredMixin, ListView):
     context_object_name = "object_list"
 
     def get_queryset(self):
-        queryset = Artwork.objects.filter(end_date__lt=now(), product_qty__gt=0)
+        queryset = Artwork.objects.filter(
+            sale_type="auction",
+            end_date__lte=timezone.now(),
+            product_qty__gt=0,
+            is_sold=False,
+            is_purchased=False,
+            status__in=["active", "unsold"],
+        )
 
-        # Get filter parameter from the request
         filter_param = self.request.GET.get("filter", "all")
 
-        # Apply filters similar to CatListView
         if filter_param == "new":
-            last_7_days = now() - timedelta(days=7)  # Adjust days as needed
-            queryset = queryset.filter(created_at__gte=last_7_days).order_by("-created_at")
-        elif filter_param == "old":
-            queryset = queryset.order_by("created_at")  # Oldest first
-        elif filter_param == "bidded":
-            queryset = queryset.filter(id__in=Bid.objects.values_list("product_id", flat=True))
+            last_7_days = timezone.now() - timedelta(days=7)
+            queryset = queryset.filter(
+                created_at__gte=last_7_days
+            ).order_by("-created_at")
 
+        elif filter_param == "old":
+            queryset = queryset.order_by("created_at")
+
+        elif filter_param == "bidded":
+            queryset = queryset.filter(
+                id__in=Bid.objects.values_list(
+                    "product_id",
+                    flat=True
+                )
+            )
         return queryset
+    
 class ArtworkSaleDetailView(DetailView):
     model = Artwork
     template_name = "art/artwork-sale_detail.html"

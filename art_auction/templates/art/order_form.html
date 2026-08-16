@@ -65,7 +65,12 @@
                                 <input type="hidden" name="product" value="{{ product.pk }}">  {# Add this line to include the product ID #}
                                 <div class="fieldWrapper mb-3">
                                     <label for="id_product_price">Latest Artwork price:</label>
-                                    <input type="number" name="product_price" value="{{ last_bid.bid_amt }}" required="" id="id_product_price" readonly>
+                                    <input type="number"
+                                       name="product_price"
+                                       value="{{ price }}"
+                                       required
+                                       id="id_product_price"
+                                       readonly>
                                 </div>
                                 <div class="fieldWrapper mb-3">
                                     <label for="id_product_qty">Artwork Quantity:</label>

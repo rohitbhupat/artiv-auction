@@ -8,7 +8,7 @@
         name: "ARTIV – Bid Online",
         description: "Payment for Artwork Purchase",
         image: "https://example.com/your_logo",
-        order_id: "{{ order.provider_order_id }}",
+        order_id: "{{ razorpay_order_id }}",
         callback_url: "{{ callback_url }}",
         redirect: true,
         prefill: {

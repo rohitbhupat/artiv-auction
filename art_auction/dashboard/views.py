@@ -42,6 +42,14 @@ import imagehash
 from django.core.exceptions import ValidationError
 from django.core.mail import send_mail, BadHeaderError
 from django.conf import settings
+from django.contrib.auth.models import User
+
+from art.services.email_service import (
+    send_outbid_email,
+    send_auction_ending_email,
+    send_auction_winner_email
+)
+
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -138,240 +146,689 @@ class ArtworkListView(LoginRequiredMixin, ListView):
 
 
 class BidCreateView(LoginRequiredMixin, View):
-    @method_decorator(csrf_exempt)
+
     def post(self, request):
+
         try:
-            bid_amt = float(request.POST.get("bid_amt", 0))
             product_id = request.POST.get("product")
-            product_object = get_object_or_404(Artwork, pk=product_id)
+            bid_value = request.POST.get("bid_amt")
 
-            highest_bid = (
-                Bid.objects.filter(product=product_object).order_by("-bid_amt").first()
-            )
-
-            # Case when there is no bid yet
-            if highest_bid is None:
-                min_bid = product_object.opening_bid
-                if bid_amt < min_bid:
-                    messages.error(
-                        request,
-                        "Your bid must be equal or greater than the opening bid amount.",
+            if not product_id or not bid_value:
+                messages.error(request, "Invalid bid information.")
+                return redirect(
+                    request.META.get(
+                        "HTTP_REFERER",
+                        "art:index"
                     )
-                    return redirect(
-                        request.META.get("HTTP_REFERER", "art:artwork_detail")
-                    )
-
-            # Case when there is already a highest bid
-            else:
-                min_bid = highest_bid.bid_amt
-                if bid_amt <= min_bid:
-                    messages.error(
-                        request, "Your bid must be higher than the current highest bid."
-                    )
-                    return redirect(
-                        request.META.get("HTTP_REFERER", "art:artwork_detail")
-                    )
-
-            # If all checks pass, create the bid
-            Bid.objects.create(
-                user=request.user, bid_amt=bid_amt, product=product_object
-            )
-
-            # Notify previous bidders
-            previous_bidders = (
-                Bid.objects.filter(product=product_object)
-                .exclude(user=request.user)
-                .values_list("user", flat=True)
-                .distinct()
-            )
-            for bidder in previous_bidders:
-                Notification.objects.create(
-                    user_id=bidder,
-                    product=product_object,
-                    message=f"A new bid has been placed on {product_object.product_name}",
                 )
 
-            messages.success(request, "Your bid has been placed successfully.")
-            return redirect(request.META.get("HTTP_REFERER", "art:artwork_detail"))
+            # Validate bid amount
+            try:
+                bid_amt = int(float(bid_value))
+            except (ValueError, TypeError):
+                messages.error(
+                    request,
+                    "Please enter a valid bid amount."
+                )
+                return redirect(
+                    request.META.get(
+                        "HTTP_REFERER",
+                        "art:index"
+                    )
+                )
 
-        except Exception as e:
-            logger.error(f"Error placing bid: {e}")
+            if bid_amt <= 0:
+                messages.error(
+                    request,
+                    "Bid amount must be greater than zero."
+                )
+                return redirect(
+                    request.META.get(
+                        "HTTP_REFERER",
+                        "art:index"
+                    )
+                )
+
+            with transaction.atomic():
+
+                # Lock artwork while processing the bid
+                product_object = (
+                    Artwork.objects
+                    .select_for_update()
+                    .get(pk=product_id)
+                )
+
+                # -----------------------------------------
+                # 1. Must be an auction
+                # -----------------------------------------
+
+                if product_object.sale_type != "auction":
+                    messages.error(
+                        request,
+                        "This artwork is not available for bidding."
+                    )
+                    return redirect(
+                        request.META.get(
+                            "HTTP_REFERER",
+                            "art:index"
+                        )
+                    )
+
+                # -----------------------------------------
+                # 2. Auction must be active
+                # -----------------------------------------
+
+                if product_object.status != "active":
+                    messages.error(
+                        request,
+                        "This auction is no longer active."
+                    )
+                    return redirect(
+                        request.META.get(
+                            "HTTP_REFERER",
+                            "art:index"
+                        )
+                    )
+
+                # -----------------------------------------
+                # 3. Auction must not have expired
+                # -----------------------------------------
+
+                if (
+                    not product_object.end_date
+                    or product_object.end_date <= timezone.now()
+                ):
+                    messages.error(
+                        request,
+                        "This auction has already ended."
+                    )
+                    return redirect(
+                        request.META.get(
+                            "HTTP_REFERER",
+                            "art:index"
+                        )
+                    )
+
+                # -----------------------------------------
+                # 4. Get current highest bid
+                # -----------------------------------------
+
+                previous_highest_bid = (
+                    Bid.objects
+                    .filter(product=product_object)
+                    .select_related("user")
+                    .order_by("-bid_amt", "bid_date")
+                    .first()
+                )
+
+                # -----------------------------------------
+                # 5. First bid
+                # -----------------------------------------
+
+                if previous_highest_bid is None:
+
+                    if bid_amt < product_object.opening_bid:
+                        messages.error(
+                            request,
+                            f"Your bid must be at least "
+                            f"₹{product_object.opening_bid}."
+                        )
+
+                        return redirect(
+                            request.META.get(
+                                "HTTP_REFERER",
+                                "art:index"
+                            )
+                        )
+
+                # -----------------------------------------
+                # 6. Existing bids
+                # -----------------------------------------
+
+                else:
+
+                    if bid_amt <= previous_highest_bid.bid_amt:
+                        messages.error(
+                            request,
+                            f"Your bid must be higher than the "
+                            f"current highest bid of "
+                            f"₹{previous_highest_bid.bid_amt}."
+                        )
+
+                        return redirect(
+                            request.META.get(
+                                "HTTP_REFERER",
+                                "art:index"
+                            )
+                        )
+
+                # -----------------------------------------
+                # 7. Create new bid
+                # -----------------------------------------
+
+                new_bid = Bid.objects.create(
+                    user=request.user,
+                    product=product_object,
+                    bid_amt=bid_amt
+                )
+                
+                if (
+                    previous_highest_bid
+                    and previous_highest_bid.user_id != request.user.id
+                ):
+                    try:
+                        send_outbid_email(
+                            user=previous_highest_bid.user,
+                            artwork=product_object,
+                            new_bid_amount=bid_amt,
+                        )
+
+                    except Exception:
+                        logger.exception(
+                            "Failed to send outbid email."
+                        )
+
+                # -----------------------------------------
+                # 8. Notify previous bidders
+                # -----------------------------------------
+
+                previous_bidders = (
+                    Bid.objects
+                    .filter(product=product_object)
+                    .exclude(user=request.user)
+                    .values_list("user", flat=True)
+                    .distinct()
+                )
+
+                for bidder_id in previous_bidders:
+
+                    Notification.objects.create(
+                        user_id=bidder_id,
+                        product=product_object,
+                        message=(
+                            f"A new bid of ₹{bid_amt} has been placed "
+                            f"on {product_object.product_name}."
+                        )
+                    )
+
+            messages.success(
+                request,
+                "Your bid has been placed successfully."
+            )
+
+            return redirect(
+                request.META.get(
+                    "HTTP_REFERER",
+                    "art:index"
+                )
+            )
+
+        except Artwork.DoesNotExist:
+
             messages.error(
                 request,
-                "An error occurred while placing your bid. Please try again later.",
+                "Artwork not found."
             )
-            return redirect(request.META.get("HTTP_REFERER", "art:artwork_detail"))
 
+            return redirect(
+                request.META.get(
+                    "HTTP_REFERER",
+                    "art:index"
+                )
+            )
+
+        except Exception as e:
+
+            logger.exception(
+                f"Error placing bid: {e}"
+            )
+
+            messages.error(
+                request,
+                "An error occurred while placing your bid. "
+                "Please try again later."
+            )
+
+            return redirect(
+                request.META.get(
+                    "HTTP_REFERER",
+                    "art:index"
+                )
+            )
 
 # Check auction status and notify the highest bidder
 # Function to send an email to the highest bidder
 from django.utils.timezone import now
 # ✅ Function to Mark Expired Artworks as Unsold
-
-def update_expired_artworks():
-    expired_artworks = Artwork.objects.filter(end_date__lte=now()).exclude(status="unsold")
-    
-    for artwork in expired_artworks:
-        artwork.status = "unsold"
-        artwork.save()
-        logging.info(f"❌ {artwork.product_name} marked as UNSOLD due to expired auction.")
-
-# ✅ Email Function for Highest Bidder
-
-def send_purchase_email():
-    update_expired_artworks()
-    
-    products = Artwork.objects.filter(end_date__lte=now(), status="unsold", buyer_response="no_response")
-    
-    if not products.exists():
-        logging.info("❌ No eligible artworks for sending purchase email.")
-        return
-    
-    for product in products:
-        bids = product.bids.order_by("-bid_amt")
         
-        if not bids.exists():
-            product.status = "unsold"
-            product.save()
-            logging.info(f"❌ {product.product_name} marked as UNSOLD due to no bids.")
-            continue
-        
-        highest_bid = bids.first()
-        try:
-            send_mail(
-                subject=f"You've won the auction for '{product.product_name}'!",
-                message=(
-                    f"Congratulations! You've won the auction for '{product.product_name}' at ₹{highest_bid.bid_amt}.\n\n"
-                    f"Click here to confirm your purchase within 12 hours:\n"
-                    f"https://artiv.co.in/confirm_purchase/{product.id}/?response=yes\n\n"
-                    f"Click here if you do not want to purchase:\n"
-                    f"https://artiv.co.in/confirm_purchase/{product.id}/?response=no\n\n"
-                    f"You have 12 hours to respond."
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[highest_bid.user.email],
-                fail_silently=False,
-            )
-            logging.info(f"✅ Email sent to {highest_bid.user.email} for {product.product_name}.")
-            
-            product.status = "waiting_for_response"
-            product.response_deadline = now() + datetime.timedelta(hours=12)
-            product.buyer_response = "no_response"
-            product.save()
-        
-        except Exception as e:
-            logging.error(f"❌ Failed to send email for {product.product_name}: {e}")
+def process_auction_ending_reminders():
 
-# ✅ Function to Handle Expired Responses
+    current_time = timezone.now()
 
-def handle_expired_responses():
-    expired_artworks = Artwork.objects.filter(
-        status="waiting_for_response", response_deadline__lte=now(), buyer_response="no_response"
+    six_hours_later = (
+        current_time +
+        datetime.timedelta(hours=6)
     )
-    
-    for product in expired_artworks:
-        bids = product.bids.order_by("-bid_amt")
-        
-        if bids.count() < 2:
-            product.status = "unsold"
-            product.save()
-            logging.info(f"❌ {product.product_name} marked as UNSOLD (no second bidder).")
-            continue
-        
-        second_highest_bid = bids[1]
-        try:
-            send_mail(
-                subject=f"You have a chance to purchase '{product.product_name}'!",
-                message=(
-                    f"The highest bidder did not respond.\n\n"
-                    f"You now have a chance to purchase '{product.product_name}'.\n\n"
-                    f"Click here to confirm your purchase within 12 hours:\n"
-                    f"https://artiv.co.in/confirm_purchase/{product.id}/?response=yes\n\n"
-                    f"Click here if you do not want to purchase:\n"
-                    f"https://artiv.co.in/confirm_purchase/{product.id}/?response=no\n\n"
-                    f"You have 12 hours to respond."
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[second_highest_bid.user.email],
-                fail_silently=False,
+
+    auctions = Artwork.objects.filter(
+        sale_type="auction",
+        status="active",
+        end_date__gt=current_time,
+        end_date__lte=six_hours_later,
+        ending_reminder_sent=False,
+    )
+
+    for artwork in auctions:
+
+        bidder_ids = (
+            Bid.objects
+            .filter(product=artwork)
+            .values_list(
+                "user_id",
+                flat=True
             )
-            logging.info(f"✅ Email sent to second highest bidder {second_highest_bid.user.email} for {product.product_name}.")
-            
-            product.response_deadline = now() + datetime.timedelta(hours=12)
-            product.buyer_response = "no_response"
-            product.save()
-        
-        except Exception as e:
-            logging.error(f"❌ Failed to send email to second highest bidder for {product.product_name}: {e}")
+            .distinct()
+        )
 
-# ✅ Function to Finalize Unsold Artworks
+        bidders = User.objects.filter(
+            id__in=bidder_ids
+        )
 
-def finalize_unsold_artworks():
-    expired_artworks = Artwork.objects.filter(status="waiting_for_response", response_deadline__lte=now())
-    
-    for product in expired_artworks:
-        product.status = "unsold"
-        product.save()
-        logging.info(f"❌ {product.product_name} marked as UNSOLD.")
+        highest_bid = (
+            artwork.bids
+            .order_by("-bid_amt", "bid_date")
+            .first()
+        )
 
-# ✅ Confirmation Function
+        current_bid = (
+            highest_bid.bid_amt
+            if highest_bid
+            else artwork.opening_bid
+        )
 
+        email_success = True
+
+        for bidder in bidders:
+
+            if not bidder.email:
+                continue
+
+            try:
+
+                send_auction_ending_email(
+                    user=bidder,
+                    artwork=artwork,
+                    current_bid=current_bid,
+                )
+
+            except Exception:
+
+                email_success = False
+
+                logger.exception(
+                    f"Failed to send 6-hour reminder "
+                    f"to {bidder.email} "
+                    f"for {artwork.product_name}"
+                )
+
+        # Only mark as sent after processing.
+        #
+        # For now, if one email fails, we leave it False
+        # so the next scheduled run can retry.
+        if email_success:
+
+            artwork.ending_reminder_sent = True
+
+            artwork.save(
+                update_fields=[
+                    "ending_reminder_sent"
+                ]
+            )
+
+def process_expired_auctions():
+    """
+    Process auctions that have reached their end time.
+
+    No bids:
+        -> UNSOLD
+
+    Has bids:
+        -> Highest bidder gets 24 hours
+        -> WAITING_FOR_RESPONSE
+        -> Winner email is sent
+    """
+
+    current_time = timezone.now()
+
+    expired_auctions = Artwork.objects.filter(
+        sale_type="auction",
+        status="active",
+        end_date__lte=current_time,
+    )
+
+    for artwork in expired_auctions:
+
+        highest_bid = (
+            artwork.bids
+            .select_related("user")
+            .order_by("-bid_amt", "bid_date")
+            .first()
+        )
+
+        # ==========================================
+        # CASE 1: NO BIDS
+        # ==========================================
+
+        if highest_bid is None:
+
+            artwork.status = "unsold"
+            artwork.is_sold = False
+            artwork.is_purchased = False
+            artwork.buyer_response = "no_response"
+
+            artwork.save(
+                update_fields=[
+                    "status",
+                    "is_sold",
+                    "is_purchased",
+                    "buyer_response",
+                ]
+            )
+
+            logging.info(
+                f"Auction ended with NO bids: "
+                f"{artwork.product_name} -> UNSOLD"
+            )
+
+            continue
+
+        # ==========================================
+        # CASE 2: HAS BIDS
+        # ==========================================
+
+        artwork.status = "waiting_for_response"
+
+        artwork.response_deadline = (
+            current_time +
+            datetime.timedelta(hours=24)
+        )
+
+        artwork.buyer_response = "no_response"
+        artwork.is_sold = False
+        artwork.is_purchased = False
+
+        # Save auction state first
+        artwork.save(
+            update_fields=[
+                "status",
+                "response_deadline",
+                "buyer_response",
+                "is_sold",
+                "is_purchased",
+            ]
+        )
+
+        # ==========================================
+        # SEND WINNER EMAIL
+        # ==========================================
+
+        try:
+
+            send_auction_winner_email(
+                user=highest_bid.user,
+                artwork=artwork,
+                winning_bid=highest_bid.bid_amt,
+            )
+
+            logging.info(
+                f"Winner email sent to "
+                f"{highest_bid.user.email} "
+                f"for {artwork.product_name}"
+            )
+
+        except Exception:
+
+            logger.exception(
+                f"Failed to send winner email for "
+                f"{artwork.product_name}"
+            )
+
+        # ==========================================
+        # LOG AUCTION RESULT
+        # ==========================================
+
+        logging.info(
+            f"Auction ended: {artwork.product_name} | "
+            f"Winner: {highest_bid.user.email} | "
+            f"Winning bid: ₹{highest_bid.bid_amt} | "
+            f"Purchase deadline: {artwork.response_deadline}"
+        )
+                
+def process_expired_purchase_windows():
+    """
+    If the winning bidder does not purchase within 24 hours,
+    mark the artwork as UNSOLD.
+    """
+
+    current_time = timezone.now()
+
+    expired_artworks = Artwork.objects.filter(
+        status="waiting_for_response",
+        response_deadline__lte=current_time,
+        buyer_response="no_response",
+    )
+
+    for artwork in expired_artworks:
+
+        artwork.status = "unsold"
+        artwork.is_sold = False
+        artwork.is_purchased = False
+
+        artwork.save(
+            update_fields=[
+                "status",
+                "is_sold",
+                "is_purchased",
+            ]
+        )
+
+        logging.info(
+            f"Purchase deadline expired: "
+            f"{artwork.product_name} → UNSOLD"
+        )
+
+@login_required
 def confirm_purchase(request, artwork_id):
+
     response = request.GET.get("response")
-    product = get_object_or_404(Artwork, pk=artwork_id)
+
+    product = get_object_or_404(
+        Artwork,
+        pk=artwork_id
+    )
+
+    # --------------------------------------------------
+    # Auction must be waiting for purchase
+    # --------------------------------------------------
+
+    if product.status != "waiting_for_response":
+
+        return render(
+            request,
+            "dashboard/404.html",
+            {
+                "message":
+                    "This artwork is not currently awaiting purchase."
+            }
+        )
+
+    # --------------------------------------------------
+    # 24-hour deadline must not have expired
+    # --------------------------------------------------
+
+    if (
+        not product.response_deadline
+        or product.response_deadline <= timezone.now()
+    ):
+
+        product.status = "unsold"
+        product.is_sold = False
+        product.is_purchased = False
+
+        product.save(
+            update_fields=[
+                "status",
+                "is_sold",
+                "is_purchased",
+            ]
+        )
+
+        return render(
+            request,
+            "dashboard/404.html",
+            {
+                "message":
+                    "The 24-hour purchase window has expired."
+            }
+        )
+
+    # --------------------------------------------------
+    # Find highest bidder
+    # --------------------------------------------------
+
+    highest_bid = (
+        product.bids
+        .select_related("user")
+        .order_by("-bid_amt", "bid_date")
+        .first()
+    )
+
+    if not highest_bid:
+
+        product.status = "unsold"
+        product.is_sold = False
+        product.is_purchased = False
+
+        product.save(
+            update_fields=[
+                "status",
+                "is_sold",
+                "is_purchased",
+            ]
+        )
+
+        return render(
+            request,
+            "dashboard/404.html",
+            {
+                "message":
+                    "No winning bidder was found."
+            }
+        )
+
+    # --------------------------------------------------
+    # ONLY highest bidder can respond
+    # --------------------------------------------------
+
+    if highest_bid.user_id != request.user.id:
+
+        return render(
+            request,
+            "dashboard/404.html",
+            {
+                "message":
+                    "You are not the winning bidder."
+            }
+        )
+
+    # --------------------------------------------------
+    # Already responded?
+    # --------------------------------------------------
 
     if product.buyer_response != "no_response":
-        return render(request, "dashboard/404.html", {"message": "Already responded."})
-    
+
+        return render(
+            request,
+            "dashboard/404.html",
+            {
+                "message":
+                    "You have already responded to this auction."
+            }
+        )
+
+    # ==================================================
+    # WINNER ACCEPTS
+    # ==================================================
+
     if response == "yes":
+
         product.status = "closed"
         product.is_sold = True
+        product.is_purchased = True
         product.buyer_response = "yes"
-        product.save()
-        
-        highest_bid = product.bids.order_by("-bid_amt").first()
-        if highest_bid:
-            logging.info(f"✅ {product.product_name} SOLD to {highest_bid.user.email} for {highest_bid.bid_amt}.")
-        
-        return redirect("art:place_order", artwork_id)
-    
+
+        product.save(
+            update_fields=[
+                "status",
+                "is_sold",
+                "is_purchased",
+                "buyer_response",
+            ]
+        )
+
+        logging.info(
+            f"Artwork SOLD: {product.product_name} | "
+            f"Buyer: {request.user.email} | "
+            f"Amount: ₹{highest_bid.bid_amt}"
+        )
+
+        return redirect(
+            "art:place_order",
+            artwork_id
+        )
+
+    # ==================================================
+    # WINNER DECLINES
+    # ==================================================
+
     elif response == "no":
+
+        product.status = "unsold"
+        product.is_sold = False
+        product.is_purchased = False
         product.buyer_response = "no"
-        product.save()
 
-        bids = product.bids.order_by("-bid_amt")
-        if bids.count() >= 2:
-            second_highest_bid = bids[1]
-            product.status = "waiting_for_response"
-            product.response_deadline = now() + datetime.timedelta(hours=12)
-            product.buyer_response = "no_response"
-            product.save()
-            
-            send_mail(
-                subject=f"You have a chance to purchase '{product.product_name}'!",
-                message=(
-                    f"The highest bidder declined.\n\n"
-                    f"You now have a chance to purchase '{product.product_name}'.\n\n"
-                    f"Confirm your purchase within 12 hours:\n"
-                    f"https://artiv.co.in/confirm_purchase/{product.id}/?response=yes\n\n"
-                    f"Decline:\n"
-                    f"https://artiv.co.in/confirm_purchase/{product.id}/?response=no"
-                ),
-                from_email=settings.DEFAULT_FROM_EMAIL,
-                recipient_list=[second_highest_bid.user.email],
-                fail_silently=False,
-            )
-            logging.info(f"📩 Email sent to second-highest bidder {second_highest_bid.user.email}.")
-        
-        else:
-            product.status = "unsold"
-            product.save()
-            logging.info(f"❌ {product.product_name} marked as UNSOLD after rejection.")
-        
-        return render(request, "art/unsold.html", {"message": "The artwork is now available to the next bidder."})
+        product.save(
+            update_fields=[
+                "status",
+                "is_sold",
+                "is_purchased",
+                "buyer_response",
+            ]
+        )
 
-    return render(request, "dashboard/404.html", {"message": "Invalid response."})
+        logging.info(
+            f"Winner declined purchase: "
+            f"{product.product_name} → UNSOLD"
+        )
 
+        return render(
+            request,
+            "art/unsold.html",
+            {
+                "message":
+                    "You declined the purchase. "
+                    "The artwork is now unsold."
+            }
+        )
+
+    return render(
+        request,
+        "dashboard/404.html",
+        {
+            "message": "Invalid response."
+        }
+    )
 
 # Function to fetch latest bid
 def latest_bid(request, pk):
